@@ -235,7 +235,7 @@ void clientMain(){
     /// Textures and Sprites
 
     sf::Texture basicSpritesTexture;
-    if (!basicSpritesTexture.loadFromFile("Sprites.png"))
+    if (!basicSpritesTexture.loadFromFile("sprites/Sprites.png"))
     {
         cout << "Arquivo Sprite.png nao foi encontrado na pasta do programa!" << endl;
     }
@@ -249,7 +249,7 @@ void clientMain(){
 
 
     sf::Texture backgroundsTexture;
-    if (!backgroundsTexture.loadFromFile("Backgrounds.png"))
+    if (!backgroundsTexture.loadFromFile("sprites/Backgrounds.png"))
     {
         cout << "Arquivo Backgrounds.png nao foi encontrado na pasta do programa!" << endl;
     }
@@ -265,7 +265,7 @@ void clientMain(){
 
     /// Sounds
     sf::SoundBuffer soundExplosion;
-    if (!soundExplosion.loadFromFile("Explosion.wav"))
+    if (!soundExplosion.loadFromFile("sounds/Explosion.wav"))
     {
         cout << "Could Not load Sound Explosion.wav" << endl;
     }

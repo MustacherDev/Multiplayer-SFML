@@ -39,10 +39,10 @@ void serverMain(){
     // ObjectX
     GameObject gameObjectX(WALL, -64, gameRoom1->roomInfo.height-64, getNewUID());
     gameObjectX.roomId = 0;
-    gameObjectX.sprite.index = SPRNULL;
+    gameObjectX.sprite.index = SPRGRASS;
     gameObjectX.colBox.width = gameRoom1->roomInfo.width + 128;
     gameObjectX.sprite.xScl = ((float)gameRoom1->roomInfo.width + 128)/32;
-
+    gameObjectX.repeatMap = true;
 
     sendInstanceCopy(gameRoom1->roomPacket, &gameObjectX);
 
@@ -82,7 +82,7 @@ void serverMain(){
     gameObjectX2.sprite.index = SPRSAND;
     gameObjectX2.colBox.width = gameRoom2->roomInfo.width + 128;
     gameObjectX2.sprite.xScl = ((float)gameRoom2->roomInfo.width + 128)/32;
-
+    gameObjectX2.repeatMap = true;
 
     sendInstanceCopy(gameRoom2->roomPacket, &gameObjectX2);
 
@@ -120,11 +120,11 @@ void serverMain(){
 
 
     if(listener.listen(2000) != sf::Socket::Done){
-        cout << "Unable to initialize server on port 2000" << endl;
+        println("Unable to initialize server on port 2000");
         system("pause");
         return;
     } else {
-        cout << "Server on Local Address : " << ip.toString() << ":" << listener.getLocalPort() << endl;
+        println("Server on Local Address : " << ip.toString() << ":" << listener.getLocalPort());
     }
 
 
@@ -171,8 +171,8 @@ void serverMain(){
 
 
                 // Text
-                cout << "Connection" << endl;
-                cout << "Client " << uId << " Connected" << endl;
+                println("Connection");
+                println("Client " << uId << " Connected");
 
 
 
@@ -385,7 +385,7 @@ void serverMain(){
                 } else if(receiveStatus == sf::Socket::Disconnected){
 
                     /// Disconnects client if connection is lost
-                    cout << "Client " << allClients[i]->id << " Disconnected" << endl;
+                    println("Client " << allClients[i]->id << " Disconnected");
 
                     disconnectClient(allGameRooms, allClients, i);
                     clientNumber--;

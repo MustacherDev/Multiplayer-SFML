@@ -15,6 +15,8 @@ using namespace std;
 
 #define PI 3.14159
 
+#define println(x) (std::cout << x << std::endl)
+
 int sign(float num){
     if(num > 0){
         return 1;
@@ -55,23 +57,13 @@ const int initWindowHeight = 600;
 
 
 
-
-
-
-
-
-
-
-
-
-
 int main()
 {
 
 
 
     char connectionType;
-    cout << "DIGITE (s) PARA SERVER OU (c) PARA CLIENTE" << endl;
+    println("DIGITE (s) PARA SERVER OU (c) PARA CLIENTE");
     cin >> connectionType;
 
 

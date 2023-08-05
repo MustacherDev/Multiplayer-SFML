@@ -38,6 +38,7 @@ class GameObject{
 
     // Sprite class
     SpriteData sprite;
+    bool repeatMap = false;
 
 
     /// Objects that hold variables for the correspondent objects
@@ -184,34 +185,70 @@ class GameObject{
         draw(windowDraw, resources, roomInfo, view);
     }
 
-    void draw(sf::RenderWindow& windowDraw, ResourceHandler& resources, RoomInfo& roomInfo, View& view){
+    void draw(sf::RenderWindow& windowDraw, ResourceHandler& resources, RoomInfo& roomInfo, View& view) {
 
-        float xx = x+roomInfo.x-view.x;
-        float yy = y+roomInfo.y-view.y;
+        float xx = x + roomInfo.x - view.x;
+        float yy = y + roomInfo.y - view.y;
 
-        if(type == PLAYER){
+        if (type == PLAYER) {
 
             drawSprite(windowDraw, resources, sprite.index, xx, yy, sprite.xScl, sprite.yScl, facing, ang);
 
             drawName(nameTag, windowDraw, resources, xx, yy);
 
-        } else if (type == BOAT){
+        }
+        else if (type == BOAT) {
 
             drawSprite(windowDraw, resources, SPRBOAT, xx, yy, sprite.xScl, sprite.yScl, facing, ang);
 
             //string str = "Boat";
             //drawName(str, windowDraw, resources);
 
-        } else if (type == BOMB){
+        }
+        else if (type == BOMB) {
 
-            float colorVal = (1- normalizeValue(bombObj.timer, 0, bombObj.explodeTime))*255;
+            float colorVal = (1 - normalizeValue(bombObj.timer, 0, bombObj.explodeTime)) * 255;
             resources.sprites[SPRBOMB]->setColor(sf::Color(255, colorVal, colorVal));
 
             drawSprite(windowDraw, resources, SPRBOMB, xx, yy, sprite.xScl, sprite.yScl, facing, ang);
 
             resources.sprites[SPRBOMB]->setColor(sf::Color(255, 255, 255));
 
-        } else if (type < OBJTOTAL){
+        }
+        else if (type == WALL){
+            if (repeatMap) {
+                float sprWid = resources.sprites[sprite.index]->getLocalBounds().width;
+                float sprHei = resources.sprites[sprite.index]->getLocalBounds().height;
+                float boundWid = colBox.width;
+                float boundHei = colBox.height;
+
+
+
+                if (boundHei / sprHei > boundWid / sprWid) {
+                    float xscl = boundWid / sprWid;
+
+                    float yRepeat = boundHei / (sprHei * xscl);
+
+                    for (int i = 0; i < yRepeat; i++) {
+                        drawSprite(windowDraw, resources, sprite.index, xx, yy+(sprHei*xscl*i), xscl, xscl, facing, ang);
+                    }
+                }
+                else {
+                    float yscl = boundHei / sprHei;
+
+                    float xRepeat = boundWid / (sprWid * yscl);
+
+                    for (int i = 0; i < xRepeat; i++) {
+                        drawSprite(windowDraw, resources, sprite.index, xx + (sprWid * yscl * i), yy, yscl, yscl, facing, ang);
+                    }
+                }
+
+            }
+            else {
+                drawSprite(windowDraw, resources, sprite.index, xx, yy, sprite.xScl, sprite.yScl, facing, ang);
+                drawBox(xx, yy, windowDraw);
+            }
+        } else if (type < OBJTOTAL) {
 
             drawSprite(windowDraw, resources, sprite.index, xx, yy, sprite.xScl, sprite.yScl, facing, ang);
 
@@ -230,7 +267,7 @@ class GameObject{
         }
 
 
-        drawBox(xx, yy, windowDraw);
+        //drawBox(xx, yy, windowDraw);
     }
 
 
@@ -306,7 +343,7 @@ sf::Packet & operator << (sf::Packet& packet, GameObject& obj){
 
     packet << obj.x << obj.y << obj.hspd << obj.vspd << obj.hacc << obj.vacc << obj.ang << obj.angSpd << obj.color << obj.id << obj.clientId << obj.roomId;
     packet << obj.clientFollow << obj.type << obj.physics << obj.colBox << obj.sprite << obj.playerObj << obj.bombObj << obj.facing << obj.holderId;
-    packet << obj.passangerId << obj.vehicleId << obj.nameTag;
+    packet << obj.passangerId << obj.vehicleId << obj.nameTag << obj.repeatMap;
 
     return packet;
 }
@@ -315,7 +352,7 @@ sf::Packet & operator >> (sf::Packet& packet, GameObject& obj){
 
     packet >> obj.x >> obj.y >> obj.hspd >> obj.vspd >> obj.hacc >> obj.vacc >> obj.ang >> obj.angSpd >> obj.color >> obj.id >> obj.clientId >> obj.roomId;
     packet >> obj.clientFollow >> obj.type >> obj.physics >> obj.colBox >> obj.sprite >> obj.playerObj >> obj.bombObj >> obj.facing >> obj.holderId;
-    packet >> obj.passangerId >> obj.vehicleId >> obj.nameTag;
+    packet >> obj.passangerId >> obj.vehicleId >> obj.nameTag >> obj.repeatMap;
 
     return packet;
 }

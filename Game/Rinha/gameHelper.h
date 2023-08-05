@@ -30,6 +30,7 @@ enum spriteIndexes{
     SPRMOON,
     SPRSTEELBAG,
     SPRSACK,
+    SPRGRASS,
     SPRARROW,
     SPRDUST1,
     SPRDUST2,
