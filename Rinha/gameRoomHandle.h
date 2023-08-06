@@ -34,7 +34,7 @@ class GameRoomHandle{
 
     void update(){
 
-
+        // Shake
         if(gameRoom->roomInfo.shakeDuration > 0){
             gameRoom->roomInfo.shakeIntensity *= 0.98;
 
@@ -82,50 +82,85 @@ class GameRoomHandle{
                             if(nextRooms[2] != gameRoom->id){
                                 GameRoom* room = findRoomById(allGameRooms, nextRooms[2]);
 
-                                cout << "Teleport Object " << obj->id << endl;
+                                
 
                                 if(room != nullptr){
-                                    obj->x = room->roomInfo.width - obj->colBox.x;
 
+                                    cout << "Teleport Object " << obj->id << endl;
 
-                                    changeInstanceRoom(room, obj);
+                                    bool hasCollided = false;
 
-                                    while(obj->passangerId != -1){
-
-                                        obj = findGameObjectById(gameRoom->gameObjects, obj->passangerId);
-                                        if(obj != nullptr){
-                                            changeInstanceRoom(room, obj);
-                                        } else {
+                                    for (GameObject* other : room->gameObjects) {
+                                        if (objHandle->collisionDetection(room->roomInfo.width - obj->colBox.x, obj->y, other)) {
+                                            hasCollided = true;
                                             break;
                                         }
+                                    }
 
+                                    
+
+                                    if (!hasCollided) {
+
+                                        obj->x = room->roomInfo.width - obj->colBox.x;
+
+                                        changeInstanceRoom(room, obj);
+
+                                        while (obj->passangerId != -1) {
+
+                                            obj = findGameObjectById(gameRoom->gameObjects, obj->passangerId);
+                                            if (obj != nullptr) {
+                                                changeInstanceRoom(room, obj);
+                                            }
+                                            else {
+                                                break;
+                                            }
+
+                                        }
                                     }
                                 }
                             } else {
-                                obj->x = gameRoom->roomInfo.width - obj->colBox.x;;
+                                obj->x = obj->colBox.x - obj->colBox.width;
+                                obj->hspd = 0;
                             }
                         } else if(obj->x + obj->colBox.x > gameRoom->roomInfo.width){
                             if(nextRooms[0] != gameRoom->id){
                                 GameRoom* room = findRoomById(allGameRooms, nextRooms[0]);
 
                                 if(room != nullptr){
-                                    obj->x = -obj->colBox.width + obj->colBox.x;
 
-                                    changeInstanceRoom(room, obj);
+                                    bool hasCollided = false;
 
-                                    while(obj->passangerId != -1){
-
-                                        obj = findGameObjectById(gameRoom->gameObjects, obj->passangerId);
-                                        if(obj != nullptr){
-                                            changeInstanceRoom(room, obj);
-                                        } else {
+                                    for (GameObject* other : room->gameObjects) {
+                                        if (objHandle->collisionDetection(-obj->colBox.width + obj->colBox.x, obj->y, other)) {
+                                            hasCollided = true;
                                             break;
                                         }
+                                    }
 
+                                    
+
+
+                                    if (!hasCollided) {
+                                        obj->x = -obj->colBox.width + obj->colBox.x;
+
+                                        changeInstanceRoom(room, obj);
+
+                                        while (obj->passangerId != -1) {
+
+                                            obj = findGameObjectById(gameRoom->gameObjects, obj->passangerId);
+                                            if (obj != nullptr) {
+                                                changeInstanceRoom(room, obj);
+                                            }
+                                            else {
+                                                break;
+                                            }
+
+                                        }
                                     }
                                 }
                             } else {
-                                obj->x = -obj->colBox.width + obj->colBox.x;
+                                obj->x = gameRoom->roomInfo.width - obj->colBox.x;
+                                obj->hspd = 0;
                             }
                         } else if(obj->y < -100){
 

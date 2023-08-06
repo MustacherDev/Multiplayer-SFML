@@ -86,6 +86,18 @@ void serverMain(){
 
     sendInstanceCopy(gameRoom2->roomPacket, &gameObjectX2);
 
+    {
+        GameObject obj(WALL, 0, gameRoom1->roomInfo.height - 64, getNewUID());
+        obj.roomId = 1;
+        obj.sprite.index = SPRSAND;
+        obj.colBox.height = (float)gameRoom2->roomInfo.height - (float)gameRoom1->roomInfo.height;
+        obj.sprite.xScl = 1;
+        obj.sprite.yScl = ((float)gameRoom2->roomInfo.height-(float)gameRoom1->roomInfo.height) / 32;
+        obj.repeatMap = true;
+
+        sendInstanceCopy(gameRoom2->roomPacket, &obj);
+    }
+
 
 
 

@@ -12,5 +12,8 @@
     <ClInclude Include="gameObjectHandle.h" />
     <ClInclude Include="gameRoomHandle.h" />
     <ClInclude Include="serverMain.h" />
+    <ClInclude Include="inputManager.h" />
+    <ClInclude Include="GUI.h" />
+    <ClInclude Include="Math2.h" />
   </ItemGroup>
 </Project>

@@ -161,7 +161,7 @@ class ResourceHandler{
 /// Room Information class
 class RoomInfo{
     public:
-    int id;
+    int id = -1;
     float hGravity;
     float vGravity;
     float x;
@@ -409,7 +409,7 @@ sf::Packet & operator >> (sf::Packet& packet, Box& box){
 
 
 
-
+/*
 class Button{
     public:
     Box box;
@@ -427,6 +427,13 @@ class Button{
     }
 
     Button(float x, float y, float width, float height, int _sprInd){
+        box = Box(x, y, width, height);
+        sprite = SpriteData(_sprInd, width, height);
+        facing = 0;
+        stretchSprite = false;
+    }
+
+    void setup(float x, float y, float width, float height, int _sprInd) {
         box = Box(x, y, width, height);
         sprite = SpriteData(_sprInd, width, height);
         facing = 0;
@@ -484,7 +491,7 @@ class Button{
         windowDraw.draw(rect);
     }
 };
-
+*/
 
 
 

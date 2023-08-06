@@ -20,221 +20,168 @@ class GameObjectHandle{
         obj = _obj;
     }
 
+    void playerUpdate() {
 
+        // Do nothing if already in vehicle
+        if (obj->vehicleId != -1) {
+            return;
+        }
+
+        int objectNum = gameObjects.size();
+
+        for (int i = 0; i < objectNum; i++) {
+            GameObject* other = gameObjects[i];
+
+            // Skip other if it is self, not active, not a boat or has a passanger
+            if (other->id == obj->id || !other->active || other->type != BOAT || other->passangerId != -1) {
+                continue;
+            }
+
+            if (collisionDetection(obj->x, obj->y, other)) {
+                other->passangerId = obj->id;
+                obj->vehicleId = other->id;
+            }
+        }
+    }
+
+    void boatUpdate() {
+        if (obj->passangerId != -1) {
+            GameObject* other = findGameObjectById(gameObjects, obj->passangerId);
+            if (other == nullptr) {
+                obj->passangerId = -1;
+            }
+        }
+    }
+
+    void bombUpdate() {
+        
+        int objectNum = gameObjects.size();
+
+        obj->bombObj.timer++;
+
+        if (obj->bombObj.timer > obj->bombObj.explodeTime) {
+            obj->active = false;
+            sendPlaySound(soundRequests, 0);
+            sendShakeRoom(roomPacket, 20, 100);
+
+            int smokeNum = ((rand() % 20) + 30);
+            for (int j = 0; j < smokeNum; j++) {
+                float xx = obj->x + ((rand() % 80) - 40);
+                float yy = obj->y + ((rand() % 80) - 40);
+
+                float spd = ((float)((rand() % 30) + 20)) / 150;
+                float randAngleDegrees = rand() % 180;
+                float angle = PI * (randAngleDegrees) / 180;
+
+                float hspd = cos(angle) * spd;
+                float vspd = sin(angle) * spd;
+
+
+                int life = (rand() % 150) + 400;
+
+                int spriteIndex = SPRDUST1 + (rand() % 3);
+
+                ParticleObject part = ParticleObject(xx, yy, hspd, vspd, spriteIndex, life, getNewUID());
+                part.sprite.xScl = 2;
+                part.sprite.yScl = 2;
+
+                sendParticleCreate(roomPacket, &part);
+            }
+
+
+            for (int j = 0; j < objectNum; j++) {
+                GameObject* other2 = gameObjects[j];
+
+                if (!other2->active) {
+                    continue;
+                }
+
+                if (other2->type != PLAYER && other2->type != BOAT && other2->type != BOMB) {
+                    continue;
+                }
+
+                float areaRadius = 150;
+                float xx = obj->x - areaRadius;
+                float yy = obj->y - areaRadius;
+
+                if (customCollisionDetection(xx, yy, areaRadius * 2, areaRadius * 2, other2)) {
+                    float dx = other2->x - obj->x;
+                    float dy = other2->y - obj->y;
+
+                    float sqrDist = dx * dx + dy * dy;
+
+                    if (sqrDist < areaRadius * areaRadius) {
+                        float invSqrDist = 1 / sqrDist;
+
+                        float impHspd = dx * invSqrDist * areaRadius * 3;
+                        impHspd = clamp(impHspd, -10, 10);
+
+                        float impVspd = dy * invSqrDist * areaRadius * 3;
+                        impVspd = clamp(impVspd, -10, 10);
+
+                        other2->hspd += impHspd;
+                        other2->vspd += impVspd;
+
+                        println("Explosion Force -> Hspd " << impHspd << " Vspd " << impVspd);
+                    }
+                }
+            }
+        }
+        else {
+
+            for (int i = 0; i < objectNum; i++) {
+                GameObject* other = gameObjects[i];
+
+                if (!other->active || other->id == obj->id || other->type == WALL || other->type == BOAT) {
+                    continue;
+                }
+
+                if (collisionDetection(obj->x, obj->y, other)) {
+                    obj->bombObj.timer = obj->bombObj.explodeTime;
+                }
+                
+            }
+            
+        }
+        
+
+    }
 
     void update(RoomInfo& roomInfo){
 
-        /// Player Object
+        /// Object Specific Updates
         if(obj->type == PLAYER){
-            if(obj->vehicleId == -1){
-                int objectNum = gameObjects.size();
-
-                for(int i = 0; i < objectNum; i++){
-                    GameObject* other = gameObjects[i];
-                    if(other->id != obj->id){
-                        if(other->active){
-                            if(other->type == BOAT){
-                                if(other->passangerId == -1){
-                                    if(collisionDetection(obj->x, obj->y, other)){
-                                        other->passangerId = obj->id;
-                                        obj->vehicleId = other->id;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            playerUpdate();
         } else if(obj->type == BOAT){
-            if(obj->passangerId != -1){
-                GameObject* other = findGameObjectById(gameObjects, obj->passangerId);
-                if(other == nullptr){
-                    obj->passangerId = -1;
-                }
-            }
-        } else if (obj->type == BOMB){
-            int objectNum = gameObjects.size();
-
-            obj->bombObj.timer++;
-
-            if(obj->bombObj.timer > obj->bombObj.explodeTime){
-                obj->active = false;
-                sendPlaySound(soundRequests, 0);
-                sendShakeRoom(roomPacket, 20, 100);
-
-                int smokeNum = ((rand()%20) + 30);
-                for(int j = 0; j < smokeNum; j++){
-                    float xx = obj->x + ((rand()%80) - 40);
-                    float yy = obj->y + ((rand()%80) - 40);
-
-                    float spd = ((float)((rand()%30) + 20))/150;
-                    float randAngleDegrees = rand()%180;
-                    float angle = PI*(randAngleDegrees)/180;
-
-                    float hspd = cos(angle)*spd;
-                    float vspd = sin(angle)*spd;
-
-
-                    int life = (rand()%150) + 400;
-
-                    int spriteIndex = SPRDUST1 + (rand()%3);
-
-                    ParticleObject part = ParticleObject(xx, yy, hspd, vspd, spriteIndex, life, getNewUID());
-                    part.sprite.xScl = 2;
-                    part.sprite.yScl = 2;
-
-
-
-                    sendParticleCreate(roomPacket, &part);
-                }
-
-
-                for(int j = 0; j < objectNum; j++){
-                    GameObject* other2 = gameObjects[j];
-
-                    cout << "Finding Speedy" << endl;
-
-                    if(other2->active){
-                        if(other2->type == PLAYER || other2->type == BOAT || other2->type == BOMB){
-                            float areaRadius = 150;
-                            float xx = obj->x - areaRadius;
-                            float yy = obj->y - areaRadius;
-
-                            if(customCollisionDetection(xx, yy, areaRadius*2, areaRadius*2, other2)){
-                                float dx = other2->x - obj->x;
-                                float dy = other2->y - obj->y;
-
-                                float sqrDist = dx*dx + dy*dy;
-
-                                if(sqrDist < areaRadius*areaRadius){
-                                    float invSqrDist = 1/sqrDist;
-
-                                    float impHspd = dx*invSqrDist*areaRadius*3;
-                                    impHspd = clamp(impHspd, -10, 10);
-
-                                    float impVspd = dy*invSqrDist*areaRadius*3;
-                                    impVspd = clamp(impVspd, -10, 10);
-
-                                    other2->hspd += impHspd;
-                                    other2->vspd += impVspd;
-
-                                    cout << "Speedy Hspd " << impHspd << " Vspd " << impVspd << endl;
-                                }
-                            }
-
-                        }
-                    }
-
-                }
-            } else {
-
-                for(int i = 0; i < objectNum; i++){
-                    GameObject* other = gameObjects[i];
-                    if(other->id != obj->id){
-                        if(other->active){
-                            if(other->type != WALL && other->type != BOAT){
-                                if(collisionDetection(obj->x, obj->y, other)){
-                                    obj->active = false;
-                                    sendPlaySound(soundRequests, 0);
-                                    sendShakeRoom(roomPacket, 20, 100);
-
-                                    int smokeNum = ((rand()%20) + 30);
-                                    for(int j = 0; j < smokeNum; j++){
-                                        float xx = obj->x + ((rand()%80) - 40);
-                                        float yy = obj->y + ((rand()%80) - 40);
-
-                                        float spd = ((float)((rand()%30) + 20))/150;
-                                        float randAngleDegrees = rand()%180;
-                                        float angle = PI*(randAngleDegrees)/180;
-
-                                        float hspd = cos(angle)*spd;
-                                        float vspd = sin(angle)*spd;
-
-
-                                        int life = (rand()%150) + 400;
-
-                                        int spriteIndex = SPRDUST1 + (rand()%3);
-
-                                        ParticleObject part = ParticleObject(xx, yy, hspd, vspd, spriteIndex, life, getNewUID());
-                                        part.sprite.xScl = 2;
-                                        part.sprite.yScl = 2;
-
-
-
-                                        sendParticleCreate(roomPacket, &part);
-                                    }
-
-
-                                    for(int j = 0; j < objectNum; j++){
-                                        GameObject* other2 = gameObjects[j];
-
-                                        cout << "Finding Speedy" << endl;
-
-                                        if(other2->active){
-                                            if(other2->type == PLAYER || other2->type == BOAT || other2->type == BOMB){
-                                                float areaRadius = 200;
-                                                float xx = obj->x - areaRadius;
-                                                float yy = obj->y - areaRadius;
-
-                                                if(customCollisionDetection(xx, yy, areaRadius*2, areaRadius*2, other2)){
-                                                    float dx = other2->x - obj->x;
-                                                    float dy = other2->y - obj->y;
-
-                                                    float sqrDist = dx*dx + dy*dy;
-
-                                                    if(sqrDist < areaRadius*areaRadius){
-                                                        float invSqrDist = 1/sqrDist;
-
-                                                        float impHspd = dx*invSqrDist*areaRadius*3;
-                                                        impHspd = clamp(impHspd, -10, 10);
-
-                                                        float impVspd = dy*invSqrDist*areaRadius*3;
-                                                        impVspd = clamp(impVspd, -10, 10);
-
-                                                        other2->hspd += impHspd;
-                                                        other2->vspd += impVspd;
-
-                                                        cout << "Speedy Hspd " << impHspd << " Vspd " << impVspd << endl;
-                                                    }
-                                                }
-
-                                            }
-                                        }
-
-                                    }
-
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            boatUpdate();
+        } else if (obj->type == BOMB) {
+            bombUpdate();
         }
 
         /// Add Walls
         /// Add Good Stuff
 
 
-
-
-
+        // If does not have a vehicle
         if(obj->vehicleId == -1){
 
 
             if(obj->holderId == -1){
 
+                // Adding gravity force
                 if(obj->physics.doGravity){
                     obj->hspd += roomInfo.hGravity;
                     obj->vspd += roomInfo.vGravity;
                 }
 
+                // Adding aceleration
                 obj->hspd += obj->hacc;
                 obj->vspd += obj->vacc;
 
                 obj->hacc = 0;
                 obj->vacc = 0;
 
+                // Dampness
                 if(obj->physics.doHDamp){
                     obj->hspd *= obj->physics.hDamp;
                 }
@@ -243,6 +190,7 @@ class GameObjectHandle{
                     obj->vspd *= obj->physics.vDamp;
                 }
 
+                // Limiting Velocity
                 obj->hspd = clamp(obj->hspd, -obj->physics.hspdMax, obj->physics.hspdMax);
                 obj->vspd = clamp(obj->vspd, -obj->physics.vspdMax, obj->physics.vspdMax);
 
@@ -285,19 +233,16 @@ class GameObjectHandle{
                         int dist = 0;
 
 
-                        if(!vSign > 0){
+                        if(!(vSign > 0)){
                             obj->playerObj.jumps = obj->playerObj.jumpsMax;
                         }
 
                         if(vSign != 0){
                             while(!placeMeeting(obj->x, obj->y + vSign, WALL) && abs(dist) < abs(obj->vspd)){
-                                cout << "colliding X:" << obj->x << " Y:" << obj->y  << " Hspd:" << obj->hspd << " Vspd:" << obj->vspd << endl;
+                                //println("colliding X:" << obj->x << " Y:" << obj->y  << " Hspd:" << obj->hspd << " Vspd:" << obj->vspd);
                                 obj->y += vSign;
                                 dist += vSign;
                             }
-
-                            //obj->x = floor(obj->x);
-                            //obj->y = floor(obj->y);
 
                             obj->vspd *= -obj->physics.vRest;
 
@@ -331,21 +276,16 @@ class GameObjectHandle{
                         int hSign = sign((int)obj->hspd);
                         int dist = 0;
 
-                        //cout << " Enganchando " << endl;
+                      
 
                         if(hSign != 0){
                             while(!placeMeeting(obj->x + hSign, obj->y, WALL) && abs(dist) < abs(obj->hspd)){
-                                cout << "colliding X:" << obj->x << " Y:" << obj->y  << " Hspd:" << obj->hspd << " Vspd:" << obj->vspd << endl;
+                                //println("colliding X:" << obj->x << " Y:" << obj->y  << " Hspd:" << obj->hspd << " Vspd:" << obj->vspd);
                                 obj->x += hSign;
                                 dist += hSign;
                             }
 
-                            //obj->x = floor(obj->x);
-                            //obj->y = floor(obj->y);
-
-
                             obj->hspd *= -obj->physics.hRest;
-                            //obj->hspd = 0;
 
                             if(abs(obj->hspd) < 1){
                                 obj->hspd = 0;
