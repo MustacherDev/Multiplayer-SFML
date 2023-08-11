@@ -216,6 +216,7 @@ public:
 
 	/// Sounds
 	sf::SoundBuffer soundExplosion;
+	sf::SoundBuffer soundWarp;
 
 	sf::Font fontGame;
 
@@ -304,6 +305,12 @@ public:
 			println("Could Not load Sound Explosion.wav");
 		}
 		resources.sounds.push_back(&soundExplosion);
+
+		if (!soundWarp.loadFromFile("sounds/Warp.wav"))
+		{
+			println("Could Not load Sound Warp.wav");
+		}
+		resources.sounds.push_back(&soundWarp);
 
 
 

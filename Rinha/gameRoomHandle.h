@@ -67,6 +67,8 @@ class GameRoomHandle{
             GameObjectHandle* objHandle = gameRoom->gameObjectHandles[i];
             GameObject* obj = objHandle->obj;
 
+
+
             if(obj->active){
 
                 /// Updating Objects
@@ -74,10 +76,44 @@ class GameRoomHandle{
 
 
 
+
+
                 /// Room Detection of (Out of Bounds objects)
                 if(obj->active){
 
                     if(obj->vehicleId == -1){
+
+
+                        // Warper
+                        
+                        for (int j = 0; j < objectHandleNumber; j++) {
+                            GameObjectHandle* otherHandle = gameRoom->gameObjectHandles[j];
+                            GameObject* other = otherHandle->obj;
+
+                            if (other->active && other->type == WARPER && other->id != obj->id && obj->hasCollision) {
+                                if (otherHandle->collisionDetection(other->x, other->y, obj)) {
+                                    if (obj->warpObj.cooldown <= 0) {
+                                        obj->x = other->warpObj.destX;
+                                        obj->y = other->warpObj.destY;
+                                        obj->warpObj.cooldown = 10000;
+
+                                        sendPlaySound(gameRoom->soundRequests, 1);
+
+                                        GameRoom* room = findRoomById(allGameRooms, other->warpObj.warpRoomId);
+
+                                        if (room != nullptr) {
+                                            teleportToRoom(room, obj);
+                                        }
+                                    }
+                                    obj->warpObj.cooldown = 100;
+                                }
+                            }
+                        }
+
+                        
+
+
+
                         if(obj->x - obj->colBox.x + obj->colBox.width < 0){
                             if(nextRooms[2] != gameRoom->id){
                                 GameRoom* room = findRoomById(allGameRooms, nextRooms[2]);
@@ -97,25 +133,9 @@ class GameRoomHandle{
                                         }
                                     }
 
-                                    
-
                                     if (!hasCollided) {
-
                                         obj->x = room->roomInfo.width - obj->colBox.x;
-
-                                        changeInstanceRoom(room, obj);
-
-                                        while (obj->passangerId != -1) {
-
-                                            obj = findGameObjectById(gameRoom->gameObjects, obj->passangerId);
-                                            if (obj != nullptr) {
-                                                changeInstanceRoom(room, obj);
-                                            }
-                                            else {
-                                                break;
-                                            }
-
-                                        }
+                                        teleportToRoom(room, obj);
                                     }
                                 }
                             } else {
@@ -137,25 +157,9 @@ class GameRoomHandle{
                                         }
                                     }
 
-                                    
-
-
                                     if (!hasCollided) {
                                         obj->x = -obj->colBox.width + obj->colBox.x;
-
-                                        changeInstanceRoom(room, obj);
-
-                                        while (obj->passangerId != -1) {
-
-                                            obj = findGameObjectById(gameRoom->gameObjects, obj->passangerId);
-                                            if (obj != nullptr) {
-                                                changeInstanceRoom(room, obj);
-                                            }
-                                            else {
-                                                break;
-                                            }
-
-                                        }
+                                        teleportToRoom(room, obj);
                                     }
                                 }
                             } else {
@@ -348,8 +352,18 @@ class GameRoomHandle{
         }
     }
 
+    void teleportToRoom(GameRoom* sendRoom, GameObject* obj) {
+        changeInstanceRoom(sendRoom, obj);
+        
 
 
+        if (obj->passangerId != -1) {
+            obj = findGameObjectById(gameRoom->gameObjects, obj->passangerId);
+            if (obj != nullptr) {
+                teleportToRoom(sendRoom, obj);
+            }
+        }
+    }
 
 
     /// Disconnects the Client

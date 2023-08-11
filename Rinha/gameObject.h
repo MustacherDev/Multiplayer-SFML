@@ -342,7 +342,7 @@ class GameObject{
 sf::Packet & operator << (sf::Packet& packet, GameObject& obj){
 
     packet << obj.x << obj.y << obj.hspd << obj.vspd << obj.hacc << obj.vacc << obj.ang << obj.angSpd << obj.color << obj.id << obj.clientId << obj.roomId;
-    packet << obj.clientFollow << obj.type << obj.physics << obj.colBox << obj.sprite << obj.playerObj << obj.bombObj << obj.facing << obj.holderId;
+    packet << obj.clientFollow << obj.type << obj.physics << obj.colBox << obj.sprite << obj.playerObj << obj.bombObj << obj.warpObj << obj.facing << obj.holderId;
     packet << obj.passangerId << obj.vehicleId << obj.nameTag << obj.repeatMap;
 
     return packet;
@@ -351,7 +351,7 @@ sf::Packet & operator << (sf::Packet& packet, GameObject& obj){
 sf::Packet & operator >> (sf::Packet& packet, GameObject& obj){
 
     packet >> obj.x >> obj.y >> obj.hspd >> obj.vspd >> obj.hacc >> obj.vacc >> obj.ang >> obj.angSpd >> obj.color >> obj.id >> obj.clientId >> obj.roomId;
-    packet >> obj.clientFollow >> obj.type >> obj.physics >> obj.colBox >> obj.sprite >> obj.playerObj >> obj.bombObj >> obj.facing >> obj.holderId;
+    packet >> obj.clientFollow >> obj.type >> obj.physics >> obj.colBox >> obj.sprite >> obj.playerObj >> obj.bombObj >> obj.warpObj >> obj.facing >> obj.holderId;
     packet >> obj.passangerId >> obj.vehicleId >> obj.nameTag >> obj.repeatMap;
 
     return packet;

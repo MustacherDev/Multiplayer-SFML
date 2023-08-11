@@ -98,6 +98,35 @@ void serverMain(){
         sendInstanceCopy(gameRoom2->roomPacket, &obj);
     }
 
+    
+    {
+        GameObject obj(WARPER, gameRoom1->roomInfo.width/2, 32, getNewUID());
+        obj.roomId = 1;
+        obj.sprite.index = SPRMOON;
+        //obj.colBox.height = (float)gameRoom2->roomInfo.height - (float)gameRoom1->roomInfo.height;
+        obj.sprite.xScl = 3;
+        obj.sprite.yScl = 3;
+        obj.warpObj.warpRoomId = gameRoom2->id;
+        obj.warpObj.destX = gameRoom2->roomInfo.width / 2;
+        obj.warpObj.destY = 64;
+        obj.physics.doGravity = false;
+        sendInstanceCopy(gameRoom1->roomPacket, &obj);
+    }
+    
+
+    {
+        GameObject obj(WARPER, gameRoom2->roomInfo.width / 2, 64, getNewUID());
+        obj.roomId = 2;
+        obj.sprite.index = SPRSUN;
+        //obj.colBox.height = (float)gameRoom2->roomInfo.height - (float)gameRoom1->roomInfo.height;
+        obj.sprite.xScl = 3;
+        obj.sprite.yScl = 3;
+        obj.warpObj.warpRoomId = gameRoom1->id;
+        obj.warpObj.destX = gameRoom1->roomInfo.width / 2;
+        obj.warpObj.destY = 32;
+        obj.physics.doGravity = false;
+        sendInstanceCopy(gameRoom2->roomPacket, &obj);
+    }
 
 
 

@@ -147,6 +147,32 @@ class GameObjectHandle{
 
     }
 
+    void warperUpdate() {
+        float xx = obj->x + ((rand() % 80) - 40);
+        float yy = obj->y + ((rand() % 80) - 40);
+
+        float spd = ((float)((rand() % 30) + 20)) / 150;
+        float randAngleDegrees = rand() % 180;
+        float angle = PI * (randAngleDegrees) / 180;
+
+        float hspd = cos(angle) * spd;
+        float vspd = sin(angle) * spd;
+
+
+        int life = (rand() % 150) + 400;
+
+        int spriteIndex = SPRDUST1 + (rand() % 3);
+
+        ParticleObject part = ParticleObject(xx, yy, hspd, vspd, spriteIndex, life, getNewUID());
+        part.sprite.xScl = 2;
+        part.sprite.yScl = 2;
+
+        sendParticleCreate(roomPacket, &part);
+
+        
+        
+    }
+
     void update(RoomInfo& roomInfo){
 
         /// Object Specific Updates
@@ -156,10 +182,16 @@ class GameObjectHandle{
             boatUpdate();
         } else if (obj->type == BOMB) {
             bombUpdate();
+        } else if (obj->type == WARPER) {
+            warperUpdate();
         }
 
         /// Add Walls
         /// Add Good Stuff
+
+        if (obj->warpObj.cooldown > 0) {
+            obj->warpObj.cooldown--;
+        }
 
 
         // If does not have a vehicle
@@ -167,6 +199,7 @@ class GameObjectHandle{
 
 
             if(obj->holderId == -1){
+
 
                 // Adding gravity force
                 if(obj->physics.doGravity){
@@ -313,6 +346,12 @@ class GameObjectHandle{
 
                 obj->angSpd *= 0.997;
                 obj->ang += obj->angSpd;
+
+
+
+
+
+
             } else {
 
                 GameObject* other = findGameObjectById(gameObjects, obj->holderId);

@@ -144,15 +144,28 @@ class ServerEventHandler{
 
             cout << "New Object Bomb Created" << endl;
         } else if(objType < OBJTOTAL){
-            cout << "??? GameRoom " << gameRoom->id << endl;
+
+            string objName = "???";
+
+            switch (objType) {
+            case WALL:
+                objName = "WALL";
+                break;
+
+            case WARPER:
+                objName = "WARPER";
+                break;
+            }
+
+            println(objName << " GameRoom " << gameRoom->id);
 
             /// Creating and Initializing Boat Object
             newObj = new GameObject(objType, x, y,id);
             newObj->roomId = gameRoom->id;
             gameRoom->gameObjects.push_back(newObj);
 
-            cout << "New Object Unnamed Created" << endl;
-        } else {
+            cout << "New Object " << objName << " Created" << endl;
+        } else { 
 
             /// When the type is not defined
             cout << "Server: Could not create Object of type " << objType << endl;

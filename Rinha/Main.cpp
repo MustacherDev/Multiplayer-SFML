@@ -87,6 +87,12 @@ int main()
     basicFont.loadFromFile("FSEX300.ttf");
 
     sf::RenderWindow window(sf::VideoMode(initWindowWidth, initWindowHeight), "The Lobby");
+
+    sf::Image icon;
+    icon.loadFromFile("sprites/churrumino.png"); // File/Image/Pixel
+    window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+
+
     Input input;
     TextInput textInput;
 
@@ -97,11 +103,11 @@ int main()
 
     ClientServerScreen clientServerScreen;
 
+    bool windowFocus = true;
+
     /// Window Loop
     while (window.isOpen())
     {
-
-        bool windowFocus = true;
 
         textInput.reset();
 
@@ -174,11 +180,9 @@ int main()
             if (clientServerScreen.clientButton.clicked) {
                 connectionType = 1;
                 clientGame.loadGame();
-                //println("Clientela " <<  connectionType);
             }
             else if (clientServerScreen.serverButton.clicked) {
                 connectionType = 0;
-               // println("Servente " << connectionType);
             }
 
         }

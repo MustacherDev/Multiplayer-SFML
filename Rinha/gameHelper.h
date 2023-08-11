@@ -409,99 +409,6 @@ sf::Packet & operator >> (sf::Packet& packet, Box& box){
 
 
 
-/*
-class Button{
-    public:
-    Box box;
-    SpriteData sprite;
-    int facing;
-    bool stretchSprite;
-
-
-
-    Button(){
-        box = Box(0, 0, 10, 10);
-        sprite = SpriteData(0);
-        facing = 0;
-        stretchSprite = false;
-    }
-
-    Button(float x, float y, float width, float height, int _sprInd){
-        box = Box(x, y, width, height);
-        sprite = SpriteData(_sprInd, width, height);
-        facing = 0;
-        stretchSprite = false;
-    }
-
-    void setup(float x, float y, float width, float height, int _sprInd) {
-        box = Box(x, y, width, height);
-        sprite = SpriteData(_sprInd, width, height);
-        facing = 0;
-        stretchSprite = false;
-    }
-
-
-
-
-    bool contain(float x, float y){
-        return box.contain(x, y);
-    }
-
-    void draw(sf::RenderWindow& windowDraw, ResourceHandler& resources){
-
-        float xScl = sprite.xScl;
-        float yScl = sprite.yScl;
-
-        if(stretchSprite){
-            sf::FloatRect _rect = resources.sprites[sprite.index]->getLocalBounds();
-            float sprWidth = _rect.width;
-            float sprHeight = _rect.height;
-
-            xScl = box.width/sprWidth;
-            yScl = box.height/sprHeight;
-        }
-
-        drawSprite(windowDraw, resources, sprite.index, box.x, box.y, xScl, yScl, facing);
-        //drawBox(windowDraw);
-    }
-
-    void drawSprite(sf::RenderWindow& windowDraw, ResourceHandler& resources, int spriteIndex, float x, float y, float xScl, float yScl, int facing){
-
-        if(facing == 1){
-            sf::FloatRect _rect = resources.sprites[spriteIndex]->getLocalBounds();
-            float sprWidth = _rect.width;
-
-            resources.sprites[spriteIndex]->setPosition(x + sprWidth*xScl, y);
-            resources.sprites[spriteIndex]->setScale(-xScl, yScl);
-            windowDraw.draw(*(resources.sprites[spriteIndex]));
-        } else {
-            resources.sprites[spriteIndex]->setPosition(x, y);
-            resources.sprites[spriteIndex]->setScale(xScl, yScl);
-            windowDraw.draw(*(resources.sprites[spriteIndex]));
-        }
-
-    }
-
-    void drawBox(sf::RenderWindow& windowDraw){
-        sf::RectangleShape rect(sf::Vector2f(box.width, box.height));
-        rect.setFillColor(sf::Color(0, 0, 0, 0));
-        rect.setOutlineColor(sf::Color::Black);
-        rect.setOutlineThickness(2);
-        rect.setPosition(box.x, box.y);
-        windowDraw.draw(rect);
-    }
-};
-*/
-
-
-
-
-
-
-
-
-
-
 
 class PlayerObject{
     public:
@@ -570,6 +477,9 @@ class WarperObject{
 
     int warpRoomId = -1;
     int warperId = -1;
+    int cooldown = 0;
+    float destX = 0;
+    float destY = 0;
 
     WarperObject(){
 
@@ -579,11 +489,11 @@ class WarperObject{
 
 
 sf::Packet & operator << (sf::Packet& packet, WarperObject& obj){
-    return packet << obj.warpRoomId << obj.warperId;
+    return packet << obj.warpRoomId << obj.warperId << obj.cooldown << obj.destX << obj.destY;
 }
 
 sf::Packet & operator >> (sf::Packet& packet, WarperObject& obj){
-    return packet >> obj.warpRoomId >> obj.warperId;
+    return packet >> obj.warpRoomId >> obj.warperId >> obj.cooldown >> obj.destX >> obj.destY;
 }
 
 
@@ -784,11 +694,13 @@ GameObject* findGameObjectByClientId(vector<GameObject*>& _allGameObjects, int c
     }
 
     cout << "Oh no ClientID:" << clientId << " Not found! Array Size " << length << endl;
+
+    return nullptr;
+
     for(int i = 0; i < length; i++){
         cout << "Object " << i << " ClientId: " << _allGameObjects[i]->clientId << endl;
      }
     //system("pause");
-    return nullptr;
 }
 
 
