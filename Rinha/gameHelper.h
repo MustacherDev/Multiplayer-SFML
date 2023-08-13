@@ -39,6 +39,11 @@ enum spriteIndexes{
     SPRTOTAL
 };
 
+enum particlePatterns {
+    PARTPATTERNEXPLOSION,
+    PARTPATTERNTOTAL
+};
+
 
 enum events{
     EVENTUPDATE,
@@ -50,6 +55,7 @@ enum events{
     EVENTPLAYSOUND,
     EVENTSHAKEROOM,
     EVENTPARTICLECREATE,
+    EVENTPARTICLEPATTERNCREATE,
     EVENTCREATEOBJECTREQUEST,
     EVENTCHANGEINSTANCEROOM,
     CLIENTEVENTENTER,
@@ -88,6 +94,7 @@ int getNewUID(){
     static int uniqueId = 0;
     return uniqueId++;
 }
+
 
 
 
@@ -499,6 +506,115 @@ sf::Packet & operator >> (sf::Packet& packet, WarperObject& obj){
 
 
 
+class ParticlePattern {
+public:
+    float hspdMin = 0;
+    float hspdMax = 0;
+    float vspdMin = 0;
+    float vspdMax = 0;
+
+    int lifeMin = 0;
+    int lifeMax = 0;
+
+    int sprIndexMin = 0;
+    int sprIndexMax = 0;
+
+    float sprXSclMin = 0;
+    float sprXSclMax = 0;
+    float sprYSclMin = 0;
+    float sprYSclMax = 0;
+
+    float xOffMin = 0;
+    float xOffMax = 0;
+    float yOffMin = 0;
+    float yOffMax = 0;
+
+    float angSpdMin = 0;
+    float angSpdMax = 0;
+    float angMin = 0;
+    float angMax = 0;
+
+ 
+
+    ParticlePattern(int type) {
+        if (type == PARTPATTERNEXPLOSION) {
+            //float xx = obj->x + ((rand() % 80) - 40);
+            setXOff(0, 40);
+            //float yy = obj->y + ((rand() % 80) - 40);
+            setYOff(0, 40);
+
+            //float spd = ((float)((rand() % 30) + 20)) / 150;
+            //float randAngleDegrees = rand() % 180;
+            //float angle = PI * (randAngleDegrees) / 180;
+            setAng(180, 180);
+
+            //float hspd = cos(angle) * spd;
+            setHspd(0.15, 0.1);
+            //float vspd = sin(angle) * spd;
+            setVspd(0.15, 0.1);
+
+            //int life = (rand() % 150) + 400;
+            setLife(475, 75);
+
+            //int spriteIndex = SPRDUST1 + (rand() % 3);
+            setSprIndex(SPRDUST1 +1, 1);
+            setSprXScl(2);
+            setSprYScl(2);
+        }
+    }
+
+    void setHspd(float val, float amp = 0) {
+        hspdMin = val - amp;
+        hspdMax = val + amp;
+    }
+
+    void setVspd(float val, float amp = 0) {
+        vspdMin = val - amp;
+        vspdMax = val + amp;
+    }
+
+    void setAngSpd(float val, float amp = 0) {
+        angSpdMin = val - amp;
+        angSpdMax = val + amp;
+    }
+
+    void setAng(float val, float amp = 0) {
+        angMin = val - amp;
+        angMax = val + amp;
+    }
+
+    void setXOff(float val, float amp = 0) {
+        xOffMin = val - amp;
+        xOffMax = val + amp;
+    }
+
+    void setYOff(float val, float amp = 0) {
+        yOffMin = val - amp;
+        yOffMax = val + amp;
+    }
+
+    void setLife(int val, int amp = 0){
+        lifeMin = val - amp;
+        lifeMax = val + amp;
+    }
+
+    void setSprXScl(float val, float amp = 0) {
+        sprXSclMin = val - amp;
+        sprXSclMax = val + amp;
+    }
+
+    void setSprYScl(float val, float amp = 0) {
+        sprYSclMin = val - amp;
+        sprYSclMax = val + amp;
+    }
+
+
+    void setSprIndex(int val, int amp = 0) {
+        sprIndexMin = val - amp;
+        sprIndexMax = val + amp;
+    }
+
+};
 
 
 
@@ -539,7 +655,7 @@ class ParticleObject{
 
     }
 
-    ParticleObject(float xx, float yy, float _hspd, float _vspd, int spriteIndex, int _life, int _id){
+    ParticleObject(float xx, float yy, float _hspd, float _vspd, int spriteIndex, int _life){
         x = xx;
         y = yy;
         hspd = _hspd;
@@ -548,7 +664,7 @@ class ParticleObject{
         vacc = 0;
         sprite.index = spriteIndex;
         life = _life;
-        id = _id;
+        id = -1;
 
         physics.hDamp = 0.997;
         physics.vDamp = 0.997;
@@ -662,7 +778,7 @@ GameObject* findGameObjectById(vector<GameObject*>& _allGameObjects, int uId){
         }
     }
 
-    cout << "Oh no ID Not found!" << length << endl;
+    println("findGameObjectById: ID " << uId <<  " Not found");
     return nullptr;
 }
 
@@ -676,7 +792,7 @@ int findGameObjectIndexById(vector<GameObject*>& _allGameObjects, int uId){
             return i;
         }
     }
-    cout << "Oh no ID Not found!" << length << endl;
+    println("findGameObjectIndexById: ID " << uId << " Not found");
     //system("pause");
     return -1;
 }
@@ -693,14 +809,13 @@ GameObject* findGameObjectByClientId(vector<GameObject*>& _allGameObjects, int c
         }
     }
 
-    cout << "Oh no ClientID:" << clientId << " Not found! Array Size " << length << endl;
+    println("findGameObjectByClientId: ClientID " << clientId << " Not found");
 
     return nullptr;
 
     for(int i = 0; i < length; i++){
         cout << "Object " << i << " ClientId: " << _allGameObjects[i]->clientId << endl;
      }
-    //system("pause");
 }
 
 
@@ -715,8 +830,8 @@ int findGameObjectIndexByClientId(vector<GameObject*>& _allGameObjects, int clie
         }
     }
 
-    cout << " ClientID:" << clientId << " Not found! Array Size " << length << endl;
-    //system("pause");
+    println("findGameObjectIndexByClientId: ClientID " << clientId << " Not found");
+ 
     return -1;
 }
 
@@ -730,13 +845,16 @@ Client* findClientById(vector<Client*>& _allClients, int uId){
         }
     }
 
-    cout << "ID of Client:" << uId << " Not found! Array Size " << length << endl;
+    println("findClientById: ID of Client: " << uId << " Not found");
+    return nullptr;
+
+
     for(int i = 0; i < length; i++){
         cout << "Client " << i << " ClientId: " << _allClients[i]->id << endl;
      }
     //system("pause");
 
-    return nullptr;
+    
 }
 
 
@@ -820,6 +938,15 @@ void sendParticleCreate(sf::Packet& packet, ParticleObject* obj){
     packet << EVENTPARTICLECREATE;
     packet << *(obj);
 
+}
+
+void sendParticlePatternCreate(sf::Packet& packet, int patternType, int partNum, float x, float y) {
+
+    packet << EVENTPARTICLEPATTERNCREATE;
+    packet << patternType;
+    packet << partNum;
+    packet << x;
+    packet << y;
 }
 
 void sendCreateObjectRequest(sf::Packet& packet, GameObject* obj, int clientId){

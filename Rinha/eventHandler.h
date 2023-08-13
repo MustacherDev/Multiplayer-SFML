@@ -77,7 +77,11 @@ class ServerEventHandler{
 
             createParticle(packet);
 
-        } else if(eventType == CLIENTEVENTCREATEOBJECTREQUEST){
+        }
+        else if (eventType == EVENTPARTICLEPATTERNCREATE) {
+            createPatternParticle(packet);
+        }
+        else if(eventType == CLIENTEVENTCREATEOBJECTREQUEST){
 
             createObjectRequest(packet);
 
@@ -238,6 +242,19 @@ class ServerEventHandler{
         gameRoom->roomInfo.shakeDuration = (gameRoom->roomInfo.shakeDuration + shakeDuration)/2;
     }
 
+    void createPatternParticle(sf::Packet& packet) {
+
+        float xx, yy;
+        int patternType, partNum;
+
+        packet >> patternType;
+        packet >> partNum;
+        packet >> xx;
+        packet >> yy;
+
+        // Nothing happens because it's client side event only
+    }
+
     void createParticle(sf::Packet& packet){
         ParticleObject part;
 
@@ -333,7 +350,11 @@ class ClientEventHandler{
         } else if(eventType == EVENTPARTICLECREATE){
             createParticle(packet);
 
-        } else if(eventType == CLIENTEVENTCREATEOBJECTREQUEST){
+        }
+        else if (eventType == EVENTPARTICLEPATTERNCREATE) {
+            createPatternParticle(packet);
+        }
+        else if (eventType == CLIENTEVENTCREATEOBJECTREQUEST) {
             createObjectRequest(packet);
 
         } else {
@@ -457,6 +478,44 @@ class ClientEventHandler{
 
         allParticles.push_back(part);
 
+    }
+
+    void createPatternParticle(sf::Packet& packet) {
+
+        float x, y;
+        int patternType, partNum;
+
+        packet >> patternType;
+        packet >> partNum;
+        packet >> x;
+        packet >> y;
+
+
+        ParticlePattern pattern = ParticlePattern(patternType);
+
+
+
+        for (int j = 0; j < partNum; j++) {
+            float xx = x + randFloatRange(pattern.xOffMin, pattern.xOffMax);
+            float yy = y + randFloatRange(pattern.yOffMin, pattern.yOffMax);
+
+            float angle = deg2Rad(randFloatRange(pattern.angMin, pattern.angMax));
+            float angleSpd = deg2Rad(randFloatRange(pattern.angSpdMin, pattern.angSpdMax));
+
+            float hspd = randFloatRange(pattern.hspdMin, pattern.hspdMax);
+            float vspd = randFloatRange(pattern.vspdMin, pattern.vspdMax);
+
+            int life = randIntRange(pattern.lifeMin, pattern.lifeMax);
+
+            int spriteIndex = randIntRange(pattern.sprIndexMin, pattern.sprIndexMax);
+
+            ParticleObject* part = new ParticleObject(xx, yy, hspd, vspd, spriteIndex, life);
+            part->sprite.xScl = randFloatRange(pattern.sprXSclMin, pattern.sprXSclMax);
+            part->sprite.yScl = randFloatRange(pattern.sprYSclMin, pattern.sprYSclMax);
+
+            allParticles.push_back(part);
+
+        }
     }
 
     void createObjectRequest(sf::Packet& packet){

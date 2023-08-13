@@ -269,20 +269,17 @@ struct ValBox{
     
 
     void update(sf::Vector2f mousePos, bool mouseClick, int inputType, char lastChar){
-        hovered = false;
         confirmed = false;
 
-        if(pointInside(mousePos, x, y, wid, hei)){
-            hovered = true;
-        }
-
+        hovered = pointInside(mousePos, x, y, wid, hei);
 
 
         if(mouseClick){
             if(hovered){
-                input = "";
                 selected = true;
             } else if(confirmOutOfFocus && selected){
+                confirm();
+
                 if(type == 0){
                     setValue(fVal);
                 } else if (type == 1){

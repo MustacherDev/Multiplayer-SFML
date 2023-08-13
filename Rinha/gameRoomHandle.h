@@ -85,6 +85,9 @@ class GameRoomHandle{
 
 
                         // Warper
+
+                        bool objChangedRoom = false;
+
                         
                         for (int j = 0; j < objectHandleNumber; j++) {
                             GameObjectHandle* otherHandle = gameRoom->gameObjectHandles[j];
@@ -95,7 +98,7 @@ class GameRoomHandle{
                                     if (obj->warpObj.cooldown <= 0) {
                                         obj->x = other->warpObj.destX;
                                         obj->y = other->warpObj.destY;
-                                        obj->warpObj.cooldown = 10000;
+                                        obj->warpObj.cooldown = 100;
 
                                         sendPlaySound(gameRoom->soundRequests, 1);
 
@@ -103,6 +106,8 @@ class GameRoomHandle{
 
                                         if (room != nullptr) {
                                             teleportToRoom(room, obj);
+                                            objChangedRoom = true;
+                                            break;
                                         }
                                     }
                                     obj->warpObj.cooldown = 100;
@@ -112,7 +117,9 @@ class GameRoomHandle{
 
                         
 
-
+                        if (objChangedRoom) {
+                            continue;
+                        }
 
                         if(obj->x - obj->colBox.x + obj->colBox.width < 0){
                             if(nextRooms[2] != gameRoom->id){
@@ -133,10 +140,14 @@ class GameRoomHandle{
                                         }
                                     }
 
+                                    
                                     if (!hasCollided) {
                                         obj->x = room->roomInfo.width - obj->colBox.x;
                                         teleportToRoom(room, obj);
+                                        objChangedRoom = true;
+                                    
                                     }
+                                    
                                 }
                             } else {
                                 obj->x = obj->colBox.x - obj->colBox.width;
@@ -157,10 +168,13 @@ class GameRoomHandle{
                                         }
                                     }
 
+                                    
                                     if (!hasCollided) {
                                         obj->x = -obj->colBox.width + obj->colBox.x;
                                         teleportToRoom(room, obj);
+                                        objChangedRoom;
                                     }
+                                    
                                 }
                             } else {
                                 obj->x = gameRoom->roomInfo.width - obj->colBox.x;

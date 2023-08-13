@@ -61,32 +61,12 @@ class GameObjectHandle{
 
         if (obj->bombObj.timer > obj->bombObj.explodeTime) {
             obj->active = false;
-            sendPlaySound(soundRequests, 0);
-            sendShakeRoom(roomPacket, 20, 100);
 
             int smokeNum = ((rand() % 20) + 30);
-            for (int j = 0; j < smokeNum; j++) {
-                float xx = obj->x + ((rand() % 80) - 40);
-                float yy = obj->y + ((rand() % 80) - 40);
 
-                float spd = ((float)((rand() % 30) + 20)) / 150;
-                float randAngleDegrees = rand() % 180;
-                float angle = PI * (randAngleDegrees) / 180;
-
-                float hspd = cos(angle) * spd;
-                float vspd = sin(angle) * spd;
-
-
-                int life = (rand() % 150) + 400;
-
-                int spriteIndex = SPRDUST1 + (rand() % 3);
-
-                ParticleObject part = ParticleObject(xx, yy, hspd, vspd, spriteIndex, life, getNewUID());
-                part.sprite.xScl = 2;
-                part.sprite.yScl = 2;
-
-                sendParticleCreate(roomPacket, &part);
-            }
+            sendPlaySound(soundRequests, 0);
+            sendShakeRoom(roomPacket, 20, 100);
+            sendParticlePatternCreate(roomPacket, PARTPATTERNEXPLOSION, smokeNum, obj->x, obj->y);
 
 
             for (int j = 0; j < objectNum; j++) {
@@ -122,7 +102,7 @@ class GameObjectHandle{
                         other2->hspd += impHspd;
                         other2->vspd += impVspd;
 
-                        println("Explosion Force -> Hspd " << impHspd << " Vspd " << impVspd);
+                        println("Explosion Force -> Hspd " << impHspd << " / Vspd " << impVspd);
                     }
                 }
             }
@@ -148,29 +128,9 @@ class GameObjectHandle{
     }
 
     void warperUpdate() {
-        float xx = obj->x + ((rand() % 80) - 40);
-        float yy = obj->y + ((rand() % 80) - 40);
-
-        float spd = ((float)((rand() % 30) + 20)) / 150;
-        float randAngleDegrees = rand() % 180;
-        float angle = PI * (randAngleDegrees) / 180;
-
-        float hspd = cos(angle) * spd;
-        float vspd = sin(angle) * spd;
-
-
-        int life = (rand() % 150) + 400;
-
-        int spriteIndex = SPRDUST1 + (rand() % 3);
-
-        ParticleObject part = ParticleObject(xx, yy, hspd, vspd, spriteIndex, life, getNewUID());
-        part.sprite.xScl = 2;
-        part.sprite.yScl = 2;
-
-        sendParticleCreate(roomPacket, &part);
-
-        
-        
+        if (randInt(15) == 1) {
+            sendParticlePatternCreate(roomPacket, PARTPATTERNEXPLOSION, 1, obj->x, obj->y);
+        }
     }
 
     void update(RoomInfo& roomInfo){

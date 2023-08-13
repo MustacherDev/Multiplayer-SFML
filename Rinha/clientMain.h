@@ -667,7 +667,6 @@ void ClientGame::runGame(Input& input, TextInput& textInput) {
 	if (roomInfo.id == -1) {
 		characterSelect(input, textInput);
 	} else {
-		
 		// Player
 		GameObject* myPlayer = findGameObjectByClientId(allGameObjects, clientId);
 		if (myPlayer != nullptr) {
@@ -676,8 +675,12 @@ void ClientGame::runGame(Input& input, TextInput& textInput) {
 
 		// View
 		activeView.update(roomInfo);
-
 		
+
+
+
+
+
 
 		/// Object Handling
 		// Removing Inactive Objects
