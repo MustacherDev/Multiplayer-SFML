@@ -76,7 +76,7 @@ class GameObjectHandle{
                     continue;
                 }
 
-                if (other2->type != PLAYER && other2->type != BOAT && other2->type != BOMB) {
+                if (other2->type != PLAYER && other2->type != BOAT && other2->type != BOMB && other2->type != BRICK) {
                     continue;
                 }
 
@@ -99,10 +99,18 @@ class GameObjectHandle{
                         float impVspd = dy * invSqrDist * areaRadius * 3;
                         impVspd = clamp(impVspd, -10, 10);
 
-                        other2->hspd += impHspd;
-                        other2->vspd += impVspd;
+                        if (other2->type == BRICK){
+                            if (abs(impHspd) + abs(impVspd) > 5) {
+                                other2->brickObj.breaked = true;
+                            }
+                        }
+                        else {
+                            other2->hspd += impHspd;
+                            other2->vspd += impVspd;
+                            println("Explosion Force -> Hspd " << impHspd << " / Vspd " << impVspd);
+                        }
 
-                        println("Explosion Force -> Hspd " << impHspd << " / Vspd " << impVspd);
+
                     }
                 }
             }
@@ -128,8 +136,47 @@ class GameObjectHandle{
     }
 
     void warperUpdate() {
-        if (randInt(15) == 1) {
+        if (randInt(20) == 1) {
             sendParticlePatternCreate(roomPacket, PARTPATTERNEXPLOSION, 1, obj->x, obj->y);
+        }
+    }
+
+    void brickUpdate() {
+        if (obj->brickObj.breaked) {
+            obj->active = false;
+
+            float xScl = obj->spriteData.xScl;
+            float yScl = obj->spriteData.yScl;
+
+            float wid = obj->colBox.width;
+            float hei = obj->colBox.height;
+
+            for (int i = 0; i < 2; i++) {
+                for (int j = 0; j < 2; j++) {
+                    ParticleObject part;
+                    part.spriteData.index = SPRNULLBITS;
+                    part.spriteData.imgNumber = j + 2*i;
+                    part.spriteData.xRotCenter = wid / 4;
+                    part.spriteData.yRotCenter = hei / 4;
+                    part.spriteData.xScl = xScl;
+                    part.spriteData.yScl = yScl;
+                    part.physics.doGravity = true;
+                    part.physics.doHDamp = false;
+                    part.physics.vspdMax = 10;
+                    part.vacc = 0.02;
+                    part.x = obj->x + (j * wid / 2);
+                    part.y = obj->y + (i * hei / 2);
+                    part.life = 600;
+
+                    part.hspd = -0.5 + j * 1;
+                    part.vspd = -3;
+
+                    part.angSpd = part.hspd / 4;
+
+                    sendParticleCreate(roomPacket, &part);
+                }
+            }
+            sendParticlePatternCreate(roomPacket, PARTPATTERNEXPLOSION, 2, obj->x, obj->y);
         }
     }
 
@@ -144,6 +191,8 @@ class GameObjectHandle{
             bombUpdate();
         } else if (obj->type == WARPER) {
             warperUpdate();
+        } else if (obj->type == BRICK) {
+            brickUpdate();
         }
 
         /// Add Walls
@@ -219,9 +268,15 @@ class GameObjectHandle{
 
 
 
+                std::vector<int> colliderTypes;
+                colliderTypes.push_back(WALL);
+                colliderTypes.push_back(BRICK);
+
+
+
                 /// Vertical Collisions
                 if(obj->hasCollision){
-                    if(placeMeeting(obj->x, obj->y + obj->vspd, WALL)){
+                    if(placeMeeting(obj->x, obj->y + obj->vspd, colliderTypes)){
                         int vSign = sign((int)obj->vspd);
                         int dist = 0;
 
@@ -231,7 +286,7 @@ class GameObjectHandle{
                         }
 
                         if(vSign != 0){
-                            while(!placeMeeting(obj->x, obj->y + vSign, WALL) && abs(dist) < abs(obj->vspd)){
+                            while(!placeMeeting(obj->x, obj->y + vSign, colliderTypes) && abs(dist) < abs(obj->vspd)){
                                 //println("colliding X:" << obj->x << " Y:" << obj->y  << " Hspd:" << obj->hspd << " Vspd:" << obj->vspd);
                                 obj->y += vSign;
                                 dist += vSign;
@@ -265,14 +320,14 @@ class GameObjectHandle{
 
                 /// Horizontal
                 if(obj->hasCollision){
-                    if(placeMeeting(obj->x + obj->hspd, obj->y, WALL)){
+                    if(placeMeeting(obj->x + obj->hspd, obj->y, colliderTypes)){
                         int hSign = sign((int)obj->hspd);
                         int dist = 0;
 
                       
 
                         if(hSign != 0){
-                            while(!placeMeeting(obj->x + hSign, obj->y, WALL) && abs(dist) < abs(obj->hspd)){
+                            while(!placeMeeting(obj->x + hSign, obj->y, colliderTypes) && abs(dist) < abs(obj->hspd)){
                                 //println("colliding X:" << obj->x << " Y:" << obj->y  << " Hspd:" << obj->hspd << " Vspd:" << obj->vspd);
                                 obj->x += hSign;
                                 dist += hSign;
@@ -382,25 +437,24 @@ class GameObjectHandle{
     }
 
 
-
     /// Returns whether or not the object have collided
-    bool placeMeeting(float xx, float yy, int type){
+    bool placeMeeting(float xx, float yy, std::vector<GameObject*> objects) {
 
         Box b1(obj->colBox.x + (int)xx, obj->colBox.y + (int)yy, obj->colBox.width, obj->colBox.height);
 
 
-        int gameObjectNumber = (int)gameObjects.size();
+        int gameObjectNumber = (int)objects.size();
 
-        for(int i = 0; i < gameObjectNumber; i++){
-            GameObject* other = gameObjects[i];
-            if(other->active){
-                if(other->type == type || type == GAMEOBJECT){
+        for (int i = 0; i < gameObjectNumber; i++) {
+            GameObject* other = objects[i];
+            if (other->active) {
+                //if (other->type == type || type == GAMEOBJECT) {
                     Box b2(other->colBox.x + (int)other->x, other->colBox.y + (int)other->y, other->colBox.width, other->colBox.height);
 
-                    if(b1.intersect(b2)){
+                    if (b1.intersect(b2)) {
                         return true;
                     }
-                }
+                //}
             }
         }
 
@@ -408,30 +462,89 @@ class GameObjectHandle{
 
     }
 
+    int findIntInVector(int val, std::vector<int> vec) {
+        for (int i = 0; i < vec.size(); i++) {
+            if (vec[i] == val){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    std::vector<GameObject*> fetchGameObjectsByType(std::vector<GameObject*> objects, int type) {
+
+        std::vector<GameObject*> filteredObjects;
+        for (GameObject* obj : objects) {
+            if (obj->type == type) {
+                filteredObjects.push_back(obj);
+            }
+        }
+
+        return filteredObjects;
+    }
+
+    std::vector<GameObject*> fetchGameObjectsByType(std::vector<GameObject*> objects, std::vector<int> types) {
+
+        std::vector<GameObject*> filteredObjects;
+        for (GameObject* obj : objects) {
+            if (findIntInVector(obj->type, types) != -1) {
+                filteredObjects.push_back(obj);
+            }
+        }
+
+        return filteredObjects;
+    }
+
+    /// Returns whether or not the object have collided
+    bool placeMeeting(float xx, float yy, int type){
+        std::vector<GameObject*> objects = fetchGameObjectsByType(gameObjects, type);
+
+        return placeMeeting(xx, yy, objects);
+    }
+
+    /// Returns whether or not the object have collided
+    bool placeMeeting(float xx, float yy, std::vector<int> types) {
+        std::vector<GameObject*> objects = fetchGameObjectsByType(gameObjects, types);
+
+        return placeMeeting(xx, yy, objects);
+    }
+
+
 
     /// Searches through the gameObjects and return all colliders
-    vector<GameObject*> instancePlace(float xx, float yy, int type){
+    std::vector<GameObject*> instancePlace(float xx, float yy, std::vector<GameObject*> objects){
         Box b1(obj->colBox.x + (int)xx, obj->colBox.y + (int)yy, obj->colBox.width, obj->colBox.height);
 
 
-        vector<GameObject*> colliders;
+        std::vector<GameObject*> colliders;
 
-        int gameObjectNumber = (int)gameObjects.size();
+        int gameObjectNumber = (int)objects.size();
 
         for(int i = 0; i < gameObjectNumber; i++){
-            GameObject* other = gameObjects[i];
-            if(other->active){
-                if(other->type == type || type == GAMEOBJECT){
-                    Box b2(other->colBox.x + (int)other->x, other->colBox.y + (int)other->y, other->colBox.width, other->colBox.height);
+            GameObject* other = objects[i];
+            if(other->active){       
+                Box b2(other->colBox.x + (int)other->x, other->colBox.y + (int)other->y, other->colBox.width, other->colBox.height);
 
-                    if(b1.intersect(b2)){
-                        colliders.push_back(other);
-                    }
-                }
+                if(b1.intersect(b2)){
+                    colliders.push_back(other);
+                }    
             }
         }
 
         return colliders;
+    }
+
+    /// Searches through the gameObjects and return all colliders
+    std::vector<GameObject*> instancePlace(float xx, float yy, int type) {
+        std::vector<GameObject*> objects = fetchGameObjectsByType(gameObjects, type);
+
+        return instancePlace(xx, yy, objects);
+    }
+
+    std::vector<GameObject*> instancePlace(float xx, float yy, std::vector<int> types) {
+        std::vector<GameObject*> objects = fetchGameObjectsByType(gameObjects, types);
+
+        return instancePlace(xx, yy, objects);
     }
 
 };

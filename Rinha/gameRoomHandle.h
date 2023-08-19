@@ -331,52 +331,59 @@ class GameRoomHandle{
 
 
     /// Changes the Room of The Instance
-    void changeInstanceRoom(GameRoom* sendRoom, GameObject* obj){
+    bool changeInstanceRoom(GameRoom* sendRoom, GameObject* obj){
 
         /// Getting the object index
         int objIndex = findGameObjectIndexById(gameRoom->gameObjects, obj->id);
 
         // Do nothing if the object was not found
         if(objIndex != -1){
+            if (!obj->changedRoom) {
+                /// If the object is followed by a client
+                if (obj->clientFollow) {
 
-            /// If the object is followed by a client
-            if(obj->clientFollow){
+                    /// Find the client
+                    Client* client = findClientById(allClients, obj->clientId);
 
-                /// Find the client
-                Client* client = findClientById(allClients , obj->clientId);
+                    // Do nothing if the client was not found
+                    if (client != nullptr) {
 
-                // Do nothing if the client was not found
-                if(client != nullptr){
+                        // Do nothing if the sendRoom is this Room
+                        if (client->roomId != sendRoom->id) {
 
-                    // Do nothing if the sendRoom is this Room
-                    if(client->roomId != sendRoom->id){
+                            /// Sends the Room Change Events
+                            sendLoadRoom(client->packet, sendRoom);
+                            client->roomId = sendRoom->id;
+                        }
+                    }
+                }
 
-                        /// Sends the Room Change Events
-                        sendLoadRoom(client->packet, sendRoom);
-                        client->roomId = sendRoom->id;
+                /// Creates the instance in the sendRoom
+                sendInstanceCopy(sendRoom->roomPacket, obj);
+
+                /// Destroys the instance in this room
+                sendInstanceDestroy(gameRoom->roomPacket, obj);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool teleportToRoom(GameRoom* sendRoom, GameObject* obj) {
+
+        
+        if (changeInstanceRoom(sendRoom, obj)) {
+            if (obj->passangerId != -1) {
+                GameObjectHandle* objHandle = findGameObjectHandleById(gameRoom->gameObjectHandles, obj->passangerId);
+                if (objHandle != nullptr) {
+                    if (!teleportToRoom(sendRoom, objHandle->obj)) {
+                        objHandle->exitVehicle();
                     }
                 }
             }
-
-            /// Creates the instance in the sendRoom
-            sendInstanceCopy(sendRoom->roomPacket, obj);
-
-            /// Destroys the instance in this room
-            sendInstanceDestroy(gameRoom->roomPacket, obj);
+            return true;
         }
-    }
-
-    void teleportToRoom(GameRoom* sendRoom, GameObject* obj) {
-        changeInstanceRoom(sendRoom, obj);
-        
-
-
-        if (obj->passangerId != -1) {
-            obj = findGameObjectById(gameRoom->gameObjects, obj->passangerId);
-            if (obj != nullptr) {
-                teleportToRoom(sendRoom, obj);
-            }
-        }
+        return false;
     }
 
 

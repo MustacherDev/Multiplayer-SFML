@@ -7,29 +7,45 @@
 void drawSprite(sf::RenderWindow& windowDraw, ResourceHandler& resources, int spriteIndex, float x, float y, float xScl, float yScl, int facing, float ang) {
 
 
-	sf::FloatRect _rect = resources.sprites[spriteIndex]->getLocalBounds();
+	
+
+	sf::Sprite spr;
+
+	SpriteMap sprMap = resources.spriteMaps[spriteIndex];
+	spr.setTexture(*resources.textures[sprMap.getTextureId()]);
+	spr.setTextureRect(sprMap.getImage(0));
+
+	sf::FloatRect _rect = spr.getLocalBounds();
 	float sprWidth = _rect.width;
 	float sprHeight = _rect.height;
 
+
+	int sprImage = 0;
+	float sprXOff = 0;
+	float sprYOff = 0;
+
+
+
+
 	if (facing == 1) {
 
-		resources.sprites[spriteIndex]->setOrigin(sprWidth / 2, sprHeight / 2);
-		resources.sprites[spriteIndex]->setRotation(ang);
+		spr.setOrigin(sprWidth / 2, sprHeight / 2);
+		spr.setRotation(ang);
 
-		resources.sprites[spriteIndex]->setPosition(x + ((sprWidth / 2)) * xScl, y + ((sprHeight / 2)) * yScl);
-		resources.sprites[spriteIndex]->setScale(-xScl, yScl);
+		spr.setPosition(x + ((sprWidth / 2) - sprXOff) * xScl, y + ((sprHeight / 2) - sprYOff) * yScl);
+		spr.setScale(-xScl, yScl);
 
-		windowDraw.draw(*(resources.sprites[spriteIndex]));
+		windowDraw.draw(spr);
 	}
 	else {
 
-		resources.sprites[spriteIndex]->setOrigin(sprWidth / 2, sprHeight / 2);
-		resources.sprites[spriteIndex]->setRotation(ang);
+		spr.setOrigin(sprWidth / 2, sprHeight / 2);
+		spr.setRotation(ang);
 
 
-		resources.sprites[spriteIndex]->setScale(xScl, yScl);
-		resources.sprites[spriteIndex]->setPosition(x + ((sprWidth / 2)) * xScl, y + ((sprHeight / 2)) * yScl);
-		windowDraw.draw(*(resources.sprites[spriteIndex]));
+		spr.setScale(xScl, yScl);
+		spr.setPosition(x + ((sprWidth / 2) - sprXOff)* xScl, y + ((sprHeight / 2) - sprYOff) * yScl);
+		windowDraw.draw(spr);
 	}
 
 
@@ -273,7 +289,164 @@ public:
 
 	}
 
+	SpriteMap createSpriteMap(int texId, int x, int y, int wid, int hei) {
+		SpriteMap sprMap;
+		sprMap.setTextureId(texId);
+		sprMap.setImage(x, y, wid, hei);
+		return sprMap;
+		//resources.spriteMaps.push_back(sprMap);
+	}
+
+	SpriteMap createSpriteMap(int texId, int x, int y, int wid, int hei, int xNum, int yNum) {
+		SpriteMap sprMap;
+		sprMap.setTextureId(texId);
+		sprMap.setImages(x, y, wid, hei, xNum, yNum);
+		return sprMap;
+		//resources.spriteMaps.push_back(sprMap);
+	}
+
 	void loadGame() {
+
+		// Textures
+		sf::Texture* texSprites = new sf::Texture();
+		if (!texSprites->loadFromFile("sprites/Sprites.png")) {
+			println("Arquivo sprites/Sprite.png nao foi encontrado na pasta do programa!");
+		}
+		
+		resources.textures.push_back(texSprites);
+
+
+		sf::Texture* texBackgrounds = new sf::Texture();
+		if (!texBackgrounds->loadFromFile("sprites/Backgrounds.png")) {
+			println("Arquivo sprites/Backgrounds.png nao foi encontrado na pasta do programa!");
+		}
+
+		resources.textures.push_back(texBackgrounds);
+
+
+
+		// SpriteMaps
+		
+		int textureId = TEXSMALL;
+		
+		// Null
+		resources.spriteMaps.push_back(createSpriteMap(textureId, 0, 0, 32, 32));
+
+		// NullBits
+		resources.spriteMaps.push_back(createSpriteMap(textureId, 0, 0, 16, 16, 2, 2));
+
+		// Xarop
+		resources.spriteMaps.push_back(createSpriteMap(textureId, 32, 0, 32, 32));
+
+		// Boat
+		resources.spriteMaps.push_back(createSpriteMap(textureId, 64, 0, 32, 32));
+
+		// Bomb
+		resources.spriteMaps.push_back(createSpriteMap(textureId, 96, 0, 32, 32));
+
+		// Rat
+		resources.spriteMaps.push_back(createSpriteMap(textureId, 128, 0, 32, 32));
+
+		// Squid
+		resources.spriteMaps.push_back(createSpriteMap(textureId, 160, 0, 32, 32, 1, 2));
+
+		// Death
+		resources.spriteMaps.push_back(createSpriteMap(textureId, 192, 0, 32, 32, 1, 2));
+
+		// Brick
+		resources.spriteMaps.push_back(createSpriteMap(textureId, 224, 0, 32, 32));
+
+		// Sun
+		resources.spriteMaps.push_back(createSpriteMap(textureId, 256, 0, 32, 32));
+
+		// Moon
+		resources.spriteMaps.push_back(createSpriteMap(textureId, 288, 0, 32, 32));
+
+		// BagSteel
+		resources.spriteMaps.push_back(createSpriteMap(textureId, 320, 0, 32, 32, 1, 2));
+
+		// PunchBag
+		resources.spriteMaps.push_back(createSpriteMap(textureId, 352, 0, 32, 32));
+
+		// Grass
+		resources.spriteMaps.push_back(createSpriteMap(textureId, 384, 0, 32, 32));
+
+		// StoneArrow
+		resources.spriteMaps.push_back(createSpriteMap(textureId, 416, 0, 32, 32));
+
+		// Dust
+		resources.spriteMaps.push_back(createSpriteMap(textureId, 448, 0, 32, 32, 3, 1));
+
+		// Sand
+		resources.spriteMaps.push_back(createSpriteMap(textureId, 544, 0, 32, 32));
+
+
+
+		textureId = TEXBACKGROUNDS;
+
+		// Rooster
+		resources.spriteMaps.push_back(createSpriteMap(textureId, 0, 0, 120, 60));
+
+		// Desert
+		resources.spriteMaps.push_back(createSpriteMap(textureId, 120, 0, 120, 60));
+
+
+
+
+
+
+		// SoundBuffers
+		sf::SoundBuffer* soundExplode = new sf::SoundBuffer();
+		if (!soundExplode->loadFromFile("sounds/Explosion.wav"))
+		{
+			println("Could Not load sounds/Explosion.wav");
+		}
+		resources.sounds.push_back(soundExplode);
+		resources.soundPlayers.push_back(sf::Sound(*soundExplode));
+
+		sf::SoundBuffer* soundWarping = new sf::SoundBuffer();
+		if (!soundWarping->loadFromFile("sounds/Warp.wav"))
+		{
+			println("Could Not load sounds/Warp.wav");
+		}
+		resources.sounds.push_back(soundWarping);
+
+		sf::Sound sndPlayerWarping(*soundWarping);
+		sndPlayerWarping.setVolume(70);
+		resources.soundPlayers.push_back(sndPlayerWarping);
+
+
+
+
+		// Fonts
+		sf::Font* fontMain = new sf::Font();
+		if (!fontMain->loadFromFile("fonts/FSEX300.ttf"))
+		{
+			println("Could Not load fonts/FSEX300.ttf");
+		}
+		resources.fonts.push_back(fontMain);
+
+
+
+
+
+		/*
+		if (!soundExplosion.loadFromFile("sounds/Explosion.wav"))
+		{
+			println("Could Not load Sound Explosion.wav");
+		}
+		resources.sounds.push_back(&soundExplosion);
+
+		if (!soundWarp.loadFromFile("sounds/Warp.wav"))
+		{
+			println("Could Not load Sound Warp.wav");
+		}
+		resources.sounds.push_back(&soundWarp);
+
+
+
+
+
 
 		if (!basicSpritesTexture.loadFromFile("sprites/Sprites.png"))
 		{
@@ -321,7 +494,7 @@ public:
 			println("Could Not load Font FSEX300.ttf");
 		}
 		resources.fonts.push_back(&fontGame);
-
+		*/
 
 		eventHandler = new ClientEventHandler(allGameObjects, allParticles, roomInfo, resources);
 
@@ -447,6 +620,8 @@ public:
 				sendStatus = socket.send(sendPacket);
 			}
 
+			//println( "Rodou clientMain.h linha " << __LINE__);
+
 		}
 
 
@@ -455,6 +630,8 @@ public:
 
 
 	void receiveAndSend(Input& input) {
+
+
 
 		// Receiving
 		sf::Packet receivePacket;
@@ -467,12 +644,20 @@ public:
 		}
 
 
+
 		if (statusReceive == sf::Socket::Done) {
+
+			//println("Receive Done");
+			//system("pause");
+
 
 			// Processing Received Data
 			while (receivePacket && !receivePacket.endOfPacket()) {
 				eventHandler->executeEvent(receivePacket);
 			}
+
+			//println(" Rodou EventHandler ");
+			//system("pause");
 
 			//gameObjectNumber = (int)allGameObjects.size();
 
@@ -521,6 +706,9 @@ public:
 
 			serverPacket.clear();
 			sendPacket.clear();
+
+			//println(" Rodou sendReceive ");
+			//system("pause");
 
 		}
 	}
@@ -586,36 +774,45 @@ void ClientGame::drawGame(sf::RenderWindow& window) {
 		rightButton.draw(window);
 		textBox.draw(window);
 
-
-		sf::Sprite* spr = resources.sprites[spriteIndexSelector];
+		SpriteMap sprMap = resources.spriteMaps[spriteIndexSelector];
+		int texId = sprMap.getTextureId();
+		sf::Sprite spr(*resources.textures[texId], sprMap.getImage(0));
 
 		float xScl = 4;
 		float yScl = 4;
 
-		sf::FloatRect bounds = spr->getLocalBounds();
+		sf::FloatRect bounds = spr.getLocalBounds();
 		float xx = (initWindowWidth / 2) - (bounds.width * xScl / 2);
 		float yy = (initWindowHeight / 2) - (bounds.height * yScl / 2);
-		spr->setPosition(xx, yy);
-		spr->setScale(xScl, yScl);
+		spr.setPosition(xx, yy);
+		spr.setScale(xScl, yScl);
 
 
-		window.draw(*spr);
+		window.draw(spr);
 	}
 	else {
 		// Background
+		
+		
 		if (roomInfo.backgroundIndex != -1) {
-			sf::Sprite* spr = resources.backgrounds[roomInfo.backgroundIndex];
-			spr->setScale(12, 12);
-			sf::FloatRect bounds = spr->getLocalBounds();
-			spr->setOrigin(sf::Vector2f(bounds.width / 2, bounds.height / 2));
+			SpriteMap sprMap = resources.spriteMaps[SPRBACKROOSTER + roomInfo.backgroundIndex];
+			int texId = sprMap.getTextureId();
+			sf::Sprite spr(*resources.textures[texId], sprMap.getImage(0));
+
+
+			spr.setScale(12, 12);
+			sf::FloatRect bounds = spr.getLocalBounds();
+			spr.setOrigin(sf::Vector2f(bounds.width / 2, bounds.height / 2));
 
 			float xParalax = activeView.x / 10;
 			float yParalax = activeView.y / 10;
 
-			spr->setPosition(roomInfo.x + (initWindowWidth / 2) - xParalax, roomInfo.y + (initWindowHeight / 2) - yParalax);
-			window.draw(*(resources.backgrounds[roomInfo.backgroundIndex]));
+			spr.setPosition(roomInfo.x + (initWindowWidth / 2) - xParalax, roomInfo.y + (initWindowHeight / 2) - yParalax);
+			window.draw(spr);
 		}
-
+		
+		
+		
 		/// Drawing Objects
 		for (GameObject* obj : allGameObjects) {
 			if (obj->active) {
@@ -629,6 +826,7 @@ void ClientGame::drawGame(sf::RenderWindow& window) {
 				obj->draw(window, resources, roomInfo, activeView);
 			}
 		}
+		
 
 		// Object Placement
 		int objectPlaceSprite = 0;
@@ -654,6 +852,8 @@ void ClientGame::drawGame(sf::RenderWindow& window) {
 
 		/// Drawing GUI
 		drawGUI(window);
+		
+		
 	}
 
 }
@@ -741,7 +941,7 @@ void ClientGame::runGame(Input& input, TextInput& textInput) {
 			int objType = 0;
 			switch (placeObjectType) {
 			case 0:
-				objType = WALL;
+				objType = BRICK;
 				break;
 
 			case 1:
@@ -753,7 +953,7 @@ void ClientGame::runGame(Input& input, TextInput& textInput) {
 				break;
 
 			default:
-				objType = WALL;
+				objType = BRICK;
 				break;
 			}
 
@@ -766,7 +966,7 @@ void ClientGame::runGame(Input& input, TextInput& textInput) {
 
 	}
 
-
+	//println("Rodou clientMain.h linha " << __LINE__);
 	/// Networking
 	// Receiving and Sending Packets
 	receiveAndSend(input);

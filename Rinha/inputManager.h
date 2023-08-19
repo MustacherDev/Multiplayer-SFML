@@ -33,6 +33,7 @@ sf::Texture& ResourceManager::getTexture(const std::string& filename) {
 		else {
 			// Handle error if texture loading fails
 			// You can throw an exception, log an error, etc.
+			println("Error loading Texture " << filename);
 		}
 	}
 
@@ -50,6 +51,7 @@ sf::SoundBuffer& ResourceManager::getSound(const std::string& filename) {
 		else {
 			// Handle error if sound loading fails
 			// You can throw an exception, log an error, etc.
+			println("Error loading Sound " << filename);
 		}
 	}
 
@@ -67,6 +69,7 @@ sf::Font& ResourceManager::getFont(const std::string& filename) {
 		else {
 			// Handle error if font loading fails
 			// You can throw an exception, log an error, etc.
+			println("Error loading Font " << filename);
 		}
 	}
 

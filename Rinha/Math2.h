@@ -57,6 +57,14 @@ float ruleOfThree(float val, float valMax, float val2Max) {
 
 // Random
 int randInt(int max) {
+	if (max < 0) {
+		return -(rand() % (-max));
+	}
+
+	if (max == 0) {
+		return 0;
+	}
+
 	return rand() % max;
 }
 

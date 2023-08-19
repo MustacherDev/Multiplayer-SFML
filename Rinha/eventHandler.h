@@ -115,45 +115,29 @@ class ServerEventHandler{
     void createObjectBase(float x, float y, int id, int objType){
         GameObject* newObj;
 
-        // Different Creation Methods for different Object Types
-        if(objType == PLAYER){
-            cout << "PLAYER GameRoom " << gameRoom->id << endl;
-
-            /// Creating and Initializing Player Object
-            newObj = new GameObject(PLAYER,x, y, id);
-            newObj->playerConstructor(0, sf::Color::Black);
-            newObj->roomId = gameRoom->id;
-            gameRoom->gameObjects.push_back(newObj);
-
-            cout << "New Object Player Created" << endl;
-
-
-        } else if(objType == BOAT) {
-            cout << "BOAT GameRoom " << gameRoom->id << endl;
-
-            /// Creating and Initializing Boat Object
-            newObj = new GameObject(BOAT,x, y,id);
-            newObj->roomId = gameRoom->id;
-            gameRoom->gameObjects.push_back(newObj);
-
-            cout << "New Object Boat Created" << endl;
-
-        } else if(objType == BOMB){
-             cout << "BOMB GameRoom " << gameRoom->id << endl;
-
-            /// Creating and Initializing Boat Object
-            newObj = new GameObject(BOMB,x, y,id);
-            newObj->roomId = gameRoom->id;
-            gameRoom->gameObjects.push_back(newObj);
-
-            cout << "New Object Bomb Created" << endl;
-        } else if(objType < OBJTOTAL){
+        if(objType < OBJTOTAL){
 
             string objName = "???";
 
             switch (objType) {
+            case PLAYER:
+                objName = "PLAYER";
+                break;
+
+            case BOAT:
+                objName = "BOAT";
+                break;
+
+            case BOMB:
+                objName = "BOMB";
+                break;
+
             case WALL:
                 objName = "WALL";
+                break;
+
+            case BRICK:
+                objName = "BRICK";
                 break;
 
             case WARPER:
@@ -322,6 +306,8 @@ class ClientEventHandler{
 
         //cout << "Client Event " << eventType;
 
+        
+
         if       (eventType == EVENTUPDATE){
             updateObject(packet);
 
@@ -363,6 +349,9 @@ class ClientEventHandler{
     }
 
     void updateObject(sf::Packet& packet){
+
+        //println("Event Update");
+        //system("pause");
         int uId;
         packet >> uId;
 
@@ -371,10 +360,15 @@ class ClientEventHandler{
         if(obj != nullptr){
             packet >> *obj;
         }
+
+        //println("Event Update End");
+        //system("pause");
     }
 
     void createObject(sf::Packet& packet){
 
+        //println("Event Create");
+        //system("pause");
         int objType;
         packet >> objType;
 
@@ -387,43 +381,56 @@ class ClientEventHandler{
 
         cout << "Creating object " << id << "!  X:" << x << " Y:" << y << " roomId:" << roomId << endl;
 
-        if(objType == PLAYER){
-            GameObject* newPlayer = new GameObject(PLAYER,x, y,id);
-            newPlayer->playerConstructor(0, sf::Color::Black);
-            newPlayer->roomId = roomId;
-            allGameObjects.push_back(newPlayer);
 
-            cout << "New Object Player Created" << endl;
-        } else if(objType == BOAT) {
-            GameObject* newBoat = new GameObject(BOAT,x, y,id);
-            newBoat->roomId = roomId;
-            allGameObjects.push_back(newBoat);
+        if(objType < OBJTOTAL){
+            string objName = "???";
 
-            cout << "New Object Boat Created" << endl;
-        } else if(objType == BOMB){
+            switch (objType) {
+            case PLAYER:
+                objName = "PLAYER";
+                break;
 
-            /// Creating and Initializing Boat Object
-            GameObject* newBomb = new GameObject(BOMB,x, y,id);
-            newBomb->roomId = roomId;
-            allGameObjects.push_back(newBomb);
+            case BOAT:
+                objName = "BOAT";
+                break;
 
-            cout << "New Object Bomb Created" << endl;
-        } else if(objType < OBJTOTAL){
+            case BOMB:
+                objName = "BOMB";
+                break;
+
+            case WALL:
+                objName = "WALL";
+                break;
+
+            case BRICK:
+                objName = "BRICK";
+                break;
+
+            case WARPER:
+                objName = "WARPER";
+                break;
+            }
+
+            println("New " << objName << " Created");
 
             /// Creating and Initializing Boat Object
             GameObject* newObj = new GameObject(objType, x, y,id);
             newObj->roomId = roomId;
             allGameObjects.push_back(newObj);
 
-            cout << "New Object Unnamed Created" << endl;
         } else {
             cout << "Server: Could not create Object of type " << objType << endl;
         }
+
+        //println("Event Create End");
+        //system("pause");
 
     }
 
     void destroyObject(sf::Packet& packet){
 
+        //println("Event Destroy");
+        //system("pause");
         int objId;
         packet >> objId;
 
@@ -431,10 +438,16 @@ class ClientEventHandler{
         if(obj != nullptr){
             obj->active = false;
         }
+
+        //println("Event Destroy End");
+        //system("pause");
     }
 
 
     void destroyAllObjects(sf::Packet& packet){
+
+        //println("Event Destroy All");
+        //system("pause");
         int objectNumber = (int)allGameObjects.size();
         for(int i = 0; i < objectNumber; i++){
             GameObject* obj = allGameObjects[i];
@@ -446,42 +459,64 @@ class ClientEventHandler{
             ParticleObject* obj = allParticles[i];
             obj->active = false;
         }
+
+        //println("Event Destroy All End");
+        //system("pause");
     }
 
     void updateRoomInfo(sf::Packet& packet){
+        //println("Event UpdateRoomInfo");
+
         packet >> roomInfo;
+        
+        //println("Event UpdateRoomInfo End");
+        //system("pause");
     }
 
     void playSound(sf::Packet& packet){
+
+        //println("Event PlaySound");
+        //system("pause");
         int soundId;
         packet >> soundId;
 
         if(soundId != -1){
-            resources.soundPlayer.setBuffer(*(resources.sounds[soundId]));
-            resources.soundPlayer.play();
+            resources.soundPlayers[soundId].play();
         }
-
+        
+        //println("Event PlaySound End");
+        //system("pause");
     }
 
     void shakeRoom(sf::Packet& packet){
+        //println("Event Shake");
+        //system("pause");
         float shakeIntensity;
         int shakeDuration;
         packet >> shakeIntensity;
         packet >> shakeDuration;
-
+        
+        //println("Event Shake End");
+        //system("pause");
     }
 
     void createParticle(sf::Packet& packet){
+        //println("Event CreateParticle");
+        //system("pause");
         ParticleObject* part = new ParticleObject();
 
         packet >> *(part);
 
         allParticles.push_back(part);
-
+        
+        //println("Event CreateParticle End");
+        //system("pause");
     }
 
     void createPatternParticle(sf::Packet& packet) {
 
+        //println("Event Pattern");
+        //system("pause");
         float x, y;
         int patternType, partNum;
 
@@ -489,6 +524,7 @@ class ClientEventHandler{
         packet >> partNum;
         packet >> x;
         packet >> y;
+
 
 
         ParticlePattern pattern = ParticlePattern(patternType);
@@ -509,13 +545,17 @@ class ClientEventHandler{
 
             int spriteIndex = randIntRange(pattern.sprIndexMin, pattern.sprIndexMax);
 
+
             ParticleObject* part = new ParticleObject(xx, yy, hspd, vspd, spriteIndex, life);
-            part->sprite.xScl = randFloatRange(pattern.sprXSclMin, pattern.sprXSclMax);
-            part->sprite.yScl = randFloatRange(pattern.sprYSclMin, pattern.sprYSclMax);
+
+            part->spriteData.xScl = randFloatRange(pattern.sprXSclMin, pattern.sprXSclMax);
+            part->spriteData.yScl = randFloatRange(pattern.sprYSclMin, pattern.sprYSclMax);
 
             allParticles.push_back(part);
 
+
         }
+
     }
 
     void createObjectRequest(sf::Packet& packet){

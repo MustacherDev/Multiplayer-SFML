@@ -32,16 +32,16 @@ void serverMain(){
     // Object2
     GameObject gameObject2(PLAYER, 400, 100, getNewUID());
     gameObject2.roomId = 0;
-    gameObject2.sprite.index = SPRBRICK;
+    gameObject2.spriteData.index = SPRBRICK;
 
     sendInstanceCopy(gameRoom1->roomPacket, &gameObject2);
 
     // ObjectX
     GameObject gameObjectX(WALL, -64, gameRoom1->roomInfo.height-64, getNewUID());
     gameObjectX.roomId = 0;
-    gameObjectX.sprite.index = SPRGRASS;
+    gameObjectX.spriteData.index = SPRGRASS;
     gameObjectX.colBox.width = gameRoom1->roomInfo.width + 128;
-    gameObjectX.sprite.xScl = ((float)gameRoom1->roomInfo.width + 128)/32;
+    gameObjectX.spriteData.xScl = ((float)gameRoom1->roomInfo.width + 128)/32;
     gameObjectX.repeatMap = true;
 
     sendInstanceCopy(gameRoom1->roomPacket, &gameObjectX);
@@ -79,9 +79,9 @@ void serverMain(){
     // ObjectX2
     GameObject gameObjectX2(WALL, -64, gameRoom2->roomInfo.height-64, getNewUID());
     gameObjectX2.roomId = 1;
-    gameObjectX2.sprite.index = SPRSAND;
+    gameObjectX2.spriteData.index = SPRSAND;
     gameObjectX2.colBox.width = gameRoom2->roomInfo.width + 128;
-    gameObjectX2.sprite.xScl = ((float)gameRoom2->roomInfo.width + 128)/32;
+    gameObjectX2.spriteData.xScl = ((float)gameRoom2->roomInfo.width + 128)/32;
     gameObjectX2.repeatMap = true;
 
     sendInstanceCopy(gameRoom2->roomPacket, &gameObjectX2);
@@ -89,10 +89,10 @@ void serverMain(){
     {
         GameObject obj(WALL, 0, gameRoom1->roomInfo.height - 64, getNewUID());
         obj.roomId = 1;
-        obj.sprite.index = SPRSAND;
+        obj.spriteData.index = SPRSAND;
         obj.colBox.height = (float)gameRoom2->roomInfo.height - (float)gameRoom1->roomInfo.height;
-        obj.sprite.xScl = 1;
-        obj.sprite.yScl = ((float)gameRoom2->roomInfo.height-(float)gameRoom1->roomInfo.height) / 32;
+        obj.spriteData.xScl = 1;
+        obj.spriteData.yScl = ((float)gameRoom2->roomInfo.height-(float)gameRoom1->roomInfo.height) / 32;
         obj.repeatMap = true;
 
         sendInstanceCopy(gameRoom2->roomPacket, &obj);
@@ -102,10 +102,10 @@ void serverMain(){
     {
         GameObject obj(WARPER, gameRoom1->roomInfo.width/2, 32, getNewUID());
         obj.roomId = 1;
-        obj.sprite.index = SPRMOON;
+        obj.spriteData.index = SPRMOON;
         //obj.colBox.height = (float)gameRoom2->roomInfo.height - (float)gameRoom1->roomInfo.height;
-        obj.sprite.xScl = 3;
-        obj.sprite.yScl = 3;
+        obj.spriteData.xScl = 3;
+        obj.spriteData.yScl = 3;
         obj.warpObj.warpRoomId = gameRoom2->id;
         obj.warpObj.destX = gameRoom2->roomInfo.width / 2;
         obj.warpObj.destY = 64;
@@ -117,10 +117,10 @@ void serverMain(){
     {
         GameObject obj(WARPER, gameRoom2->roomInfo.width / 2, 64, getNewUID());
         obj.roomId = 2;
-        obj.sprite.index = SPRSUN;
+        obj.spriteData.index = SPRSUN;
         //obj.colBox.height = (float)gameRoom2->roomInfo.height - (float)gameRoom1->roomInfo.height;
-        obj.sprite.xScl = 3;
-        obj.sprite.yScl = 3;
+        obj.spriteData.xScl = 3;
+        obj.spriteData.yScl = 3;
         obj.warpObj.warpRoomId = gameRoom1->id;
         obj.warpObj.destX = gameRoom1->roomInfo.width / 2;
         obj.warpObj.destY = 32;
@@ -356,7 +356,7 @@ void serverMain(){
                             GameObject newPlayer(PLAYER, 150, 0, getNewUID());
                             newPlayer.playerConstructor(uId, sf::Color((uId*218)%256, (uId*189)%256, (uId*320)%256));
                             newPlayer.clientId = uId;
-                            newPlayer.sprite.index = playerSprite;
+                            newPlayer.spriteData.index = playerSprite;
                             newPlayer.nameTag = playerName;
 
                             // Sending Object Copy

@@ -1,8 +1,8 @@
 ﻿  Main.cpp
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\Math2.h(73,22): warning C4244: 'return': conversão de 'double' para 'float', possível perda de dados
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\Math2.h(83,13): warning C4244: 'return': conversão de 'double' para 'float', possível perda de dados
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\Math2.h(88,21): warning C4244: 'return': conversão de 'long double' para 'float', possível perda de dados
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\Math2.h(93,20): warning C4244: 'return': conversão de 'long double' para 'float', possível perda de dados
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\Math2.h(81,22): warning C4244: 'return': conversão de 'double' para 'float', possível perda de dados
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\Math2.h(91,13): warning C4244: 'return': conversão de 'double' para 'float', possível perda de dados
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\Math2.h(96,21): warning C4244: 'return': conversão de 'long double' para 'float', possível perda de dados
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\Math2.h(101,20): warning C4244: 'return': conversão de 'long double' para 'float', possível perda de dados
 E:\DOC\GitHub\Multiplayer-SFML\Rinha\GUI.h(70,40): warning C4244: 'argumento': conversão de 'double' para 'unsigned int', possível perda de dados
 E:\DOC\GitHub\Multiplayer-SFML\Rinha\GUI.h(73,43): warning C4244: 'argumento': conversão de 'float' para 'unsigned int', possível perda de dados
 E:\DOC\GitHub\Multiplayer-SFML\Rinha\GUI.h(89,35): warning C4244: '+=': conversão de 'double' para 'float', possível perda de dados
@@ -56,46 +56,50 @@ E:\DOC\GitHub\Multiplayer-SFML\Rinha\GUI.h(625,28): warning C4244: '=': convers�
 E:\DOC\GitHub\Multiplayer-SFML\Rinha\GUI.h(645,24): warning C4244: 'inicializando': conversão de 'double' para 'float', possível perda de dados
 E:\DOC\GitHub\Multiplayer-SFML\Rinha\GUI.h(647,36): warning C4244: 'argumento': conversão de 'float' para 'unsigned int', possível perda de dados
 E:\DOC\GitHub\Multiplayer-SFML\Rinha\GUI.h(662,39): warning C4244: 'argumento': conversão de 'float' para 'unsigned int', possível perda de dados
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(242,1): warning C4305: '*=': truncamento de 'double' para 'float'
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(243,1): warning C4305: '*=': truncamento de 'double' para 'float'
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(270,11): warning C4305: 'inicializando': truncamento de 'double' para 'float'
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(271,11): warning C4305: 'inicializando': truncamento de 'double' para 'float'
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(244,1): warning C4305: '*=': truncamento de 'double' para 'float'
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(245,1): warning C4305: '*=': truncamento de 'double' para 'float'
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(272,11): warning C4305: 'inicializando': truncamento de 'double' para 'float'
 E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(273,11): warning C4305: 'inicializando': truncamento de 'double' para 'float'
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(274,11): warning C4305: 'inicializando': truncamento de 'double' para 'float'
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(345,64): warning C4099: 'SpriteData': nome de tipo visto primeiro usando 'class', agora visto usando 'struct'
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(301,7): message : consulte a declaração de 'SpriteData'
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(349,64): warning C4099: 'SpriteData': nome de tipo visto primeiro usando 'class', agora visto usando 'struct'
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(301,7): message : consulte a declaração de 'SpriteData'
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(552,1): warning C4305: 'argumento': truncamento de 'double' para 'float'
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(554,1): warning C4305: 'argumento': truncamento de 'double' para 'float'
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(669,1): warning C4305: '=': truncamento de 'double' para 'float'
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(670,1): warning C4305: '=': truncamento de 'double' para 'float'
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObject.h(94,1): warning C4305: '=': truncamento de 'double' para 'float'
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObject.h(95,1): warning C4305: '=': truncamento de 'double' para 'float'
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObject.h(210,75): warning C4244: 'argumento': conversão de 'int' para 'float', possível perda de dados
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObject.h(210,57): warning C4244: 'argumento': conversão de 'int' para 'float', possível perda de dados
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObject.h(211,75): warning C4244: 'argumento': conversão de 'float' para 'sf::Uint8', possível perda de dados
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObject.h(211,65): warning C4244: 'argumento': conversão de 'float' para 'sf::Uint8', possível perda de dados
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(772,40): warning C4267: 'inicializando': conversão de 'size_t' para 'int', possível perda de dados
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(787,40): warning C4267: 'inicializando': conversão de 'size_t' para 'int', possível perda de dados
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(803,40): warning C4267: 'inicializando': conversão de 'size_t' para 'int', possível perda de dados
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(825,40): warning C4267: 'inicializando': conversão de 'size_t' para 'int', possível perda de dados
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(840,36): warning C4267: 'inicializando': conversão de 'size_t' para 'int', possível perda de dados
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(275,11): warning C4305: 'inicializando': truncamento de 'double' para 'float'
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(276,11): warning C4305: 'inicializando': truncamento de 'double' para 'float'
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(434,64): warning C4099: 'SpriteData': nome de tipo visto primeiro usando 'class', agora visto usando 'struct'
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(389,7): message : consulte a declaração de 'SpriteData'
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(438,64): warning C4099: 'SpriteData': nome de tipo visto primeiro usando 'class', agora visto usando 'struct'
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(389,7): message : consulte a declaração de 'SpriteData'
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(669,1): warning C4305: 'argumento': truncamento de 'double' para 'float'
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(671,1): warning C4305: 'argumento': truncamento de 'double' para 'float'
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(840,1): warning C4305: '=': truncamento de 'double' para 'float'
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(841,1): warning C4305: '=': truncamento de 'double' para 'float'
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObject.h(102,1): warning C4305: '=': truncamento de 'double' para 'float'
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObject.h(103,1): warning C4305: '=': truncamento de 'double' para 'float'
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObject.h(231,75): warning C4244: 'argumento': conversão de 'int' para 'float', possível perda de dados
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObject.h(231,57): warning C4244: 'argumento': conversão de 'int' para 'float', possível perda de dados
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObject.h(232,54): warning C4244: 'argumento': conversão de 'float' para 'sf::Uint8', possível perda de dados
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObject.h(232,44): warning C4244: 'argumento': conversão de 'float' para 'sf::Uint8', possível perda de dados
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObject.h(242,30): warning C4244: 'inicializando': conversão de 'int' para 'float', possível perda de dados
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObject.h(243,30): warning C4244: 'inicializando': conversão de 'int' para 'float', possível perda de dados
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(949,40): warning C4267: 'inicializando': conversão de 'size_t' para 'int', possível perda de dados
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(964,40): warning C4267: 'inicializando': conversão de 'size_t' para 'int', possível perda de dados
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(980,40): warning C4267: 'inicializando': conversão de 'size_t' para 'int', possível perda de dados
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(1002,40): warning C4267: 'inicializando': conversão de 'size_t' para 'int', possível perda de dados
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(1017,36): warning C4267: 'inicializando': conversão de 'size_t' para 'int', possível perda de dados
 E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObjectHandle.h(30,1): warning C4267: 'inicializando': conversão de 'size_t' para 'int', possível perda de dados
 E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObjectHandle.h(58,1): warning C4267: 'inicializando': conversão de 'size_t' para 'int', possível perda de dados
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObjectHandle.h(225,50): warning C4244: 'argumento': conversão de 'int' para 'float', possível perda de dados
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObjectHandle.h(269,50): warning C4244: 'argumento': conversão de 'int' para 'float', possível perda de dados
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObjectHandle.h(307,1): warning C4305: '*=': truncamento de 'double' para 'float'
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObjectHandle.h(378,51): warning C4244: 'argumento': conversão de 'int' para 'float', possível perda de dados
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObjectHandle.h(378,39): warning C4244: 'argumento': conversão de 'int' para 'float', possível perda de dados
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObjectHandle.h(378,30): warning C4244: 'argumento': conversão de 'int' para 'float', possível perda de dados
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObjectHandle.h(378,21): warning C4244: 'argumento': conversão de 'int' para 'float', possível perda de dados
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(982,46): warning C4267: 'inicializando': conversão de 'size_t' para 'int', possível perda de dados
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(1026,1): warning C4305: '=': truncamento de 'double' para 'float'
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(1039,38): warning C4267: 'inicializando': conversão de 'size_t' para 'int', possível perda de dados
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\eventHandler.h(224,1): warning C4099: 'RoomInfo': nome de tipo visto primeiro usando 'class', agora visto usando 'struct'
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(169,7): message : consulte a declaração de 'RoomInfo'
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\eventHandler.h(314,1): warning C4305: '=': truncamento de 'double' para 'float'
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObjectHandle.h(166,1): warning C4305: '=': truncamento de 'double' para 'float'
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObjectHandle.h(171,38): warning C4244: '=': conversão de 'double' para 'float', possível perda de dados
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObjectHandle.h(280,50): warning C4244: 'argumento': conversão de 'int' para 'float', possível perda de dados
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObjectHandle.h(324,50): warning C4244: 'argumento': conversão de 'int' para 'float', possível perda de dados
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObjectHandle.h(362,1): warning C4305: '*=': truncamento de 'double' para 'float'
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObjectHandle.h(433,51): warning C4244: 'argumento': conversão de 'int' para 'float', possível perda de dados
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObjectHandle.h(433,39): warning C4244: 'argumento': conversão de 'int' para 'float', possível perda de dados
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObjectHandle.h(433,30): warning C4244: 'argumento': conversão de 'int' para 'float', possível perda de dados
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameObjectHandle.h(433,21): warning C4244: 'argumento': conversão de 'int' para 'float', possível perda de dados
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(1159,46): warning C4267: 'inicializando': conversão de 'size_t' para 'int', possível perda de dados
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(1203,1): warning C4305: '=': truncamento de 'double' para 'float'
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(1216,38): warning C4267: 'inicializando': conversão de 'size_t' para 'int', possível perda de dados
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\eventHandler.h(208,1): warning C4099: 'RoomInfo': nome de tipo visto primeiro usando 'class', agora visto usando 'struct'
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(171,7): message : consulte a declaração de 'RoomInfo'
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\eventHandler.h(298,1): warning C4305: '=': truncamento de 'double' para 'float'
 E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameRoomHandle.h(39,1): warning C4305: '*=': truncamento de 'double' para 'float'
 E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameRoomHandle.h(50,1): warning C4305: '*=': truncamento de 'double' para 'float'
 E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameRoomHandle.h(51,1): warning C4305: '*=': truncamento de 'double' para 'float'
@@ -104,12 +108,12 @@ E:\DOC\GitHub\Multiplayer-SFML\Rinha\serverMain.h(59,40): warning C4305: '=': tr
 E:\DOC\GitHub\Multiplayer-SFML\Rinha\serverMain.h(298,66): warning C4244: 'argumento': conversão de 'int' para 'float', possível perda de dados
 E:\DOC\GitHub\Multiplayer-SFML\Rinha\serverMain.h(315,52): warning C4244: 'argumento': conversão de 'int' para 'float', possível perda de dados
 E:\DOC\GitHub\Multiplayer-SFML\Rinha\serverMain.h(396,78): warning C4267: 'inicializando': conversão de 'size_t' para 'int', possível perda de dados
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\clientMain.h(206,26): warning C4099: 'RoomInfo': nome de tipo visto primeiro usando 'class', agora visto usando 'struct'
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(169,7): message : consulte a declaração de 'RoomInfo'
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\clientMain.h(653,126): warning C4305: 'argumento': truncamento de 'double' para 'float'
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\clientMain.h(663,15): warning C4305: '+=': truncamento de 'double' para 'float'
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\clientMain.h(687,3): warning C4267: 'inicializando': conversão de 'size_t' para 'int', possível perda de dados
-E:\DOC\GitHub\Multiplayer-SFML\Rinha\clientMain.h(703,3): warning C4267: 'inicializando': conversão de 'size_t' para 'int', possível perda de dados
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\clientMain.h(222,26): warning C4099: 'RoomInfo': nome de tipo visto primeiro usando 'class', agora visto usando 'struct'
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\gameHelper.h(171,7): message : consulte a declaração de 'RoomInfo'
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\clientMain.h(851,126): warning C4305: 'argumento': truncamento de 'double' para 'float'
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\clientMain.h(863,15): warning C4305: '+=': truncamento de 'double' para 'float'
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\clientMain.h(887,3): warning C4267: 'inicializando': conversão de 'size_t' para 'int', possível perda de dados
+E:\DOC\GitHub\Multiplayer-SFML\Rinha\clientMain.h(903,3): warning C4267: 'inicializando': conversão de 'size_t' para 'int', possível perda de dados
 E:\DOC\GitHub\Multiplayer-SFML\Rinha\Main.cpp(129,82): warning C4244: 'argumento': conversão de 'int' para 'T', possível perda de dados
           with
           [
@@ -121,8 +125,8 @@ E:\DOC\GitHub\Multiplayer-SFML\Rinha\Main.cpp(129,63): warning C4244: 'argumento
               T=float
           ]
   Gerando código
-  23 of 983 functions ( 2.3%) were compiled, the rest were copied from previous compilation.
-    13 functions were new in current compilation
-    7 functions had inline decision re-evaluated but remain unchanged
+  2 of 1254 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    3 functions had inline decision re-evaluated but remain unchanged
   Finalizada a geração de código
   Rinha.vcxproj -> E:\DOC\GitHub\Multiplayer-SFML\x64\Release\Game.exe

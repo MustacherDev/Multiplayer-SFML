@@ -13,12 +13,20 @@ enum objectTypes{
     BOMB,
     BOX,
     WALL,
+    BRICK,
     WARPER,
     OBJTOTAL
 };
 
+enum textureIndexes {
+    TEXSMALL,
+    TEXBACKGROUNDS,
+    TEXTOTAL
+};
+
 enum spriteIndexes{
     SPRNULL,
+    SPRNULLBITS,
     SPRXAROP,
     SPRBOAT,
     SPRBOMB,
@@ -32,15 +40,22 @@ enum spriteIndexes{
     SPRSACK,
     SPRGRASS,
     SPRARROW,
-    SPRDUST1,
-    SPRDUST2,
-    SPRDUST3,
+    SPRDUST,
     SPRSAND,
+    SPRBACKROOSTER,
+    SPRBACKDESERT,
     SPRTOTAL
+};
+
+enum soundIndexes {
+    SNDEXPLOSION,
+    SNDWARP,
+    SNDTOTAL
 };
 
 enum particlePatterns {
     PARTPATTERNEXPLOSION,
+    PARTPATTERNBRICKBREAK,
     PARTPATTERNTOTAL
 };
 
@@ -144,19 +159,6 @@ class Client{
 
 
 
-
-
-
-
-/// Resource Handler, stores vectors to resources
-class ResourceHandler{
-    public:
-    vector<sf::Sprite*> sprites;
-    vector<sf::Sprite*> backgrounds;
-    vector<sf::SoundBuffer*> sounds;
-    sf::Sound soundPlayer;
-    vector<sf::Font*> fonts;
-};
 
 
 
@@ -295,12 +297,99 @@ sf::Packet & operator >> (sf::Packet& packet, struct Physics& phy){
 
 
 
+struct SpriteMap {
+
+    // Puts Texture Areas(IntRects) into easily acessible vectors
+    // All areas have to have the same width and height
+
+private:
+    int textureId = -1;
+    vector<sf::Vector2i> imageCorners;
+    int imgNumber = 0;
+    int width = 0;
+    int height = 0;
+
+public:
+    void setTextureId(int texId){
+        textureId = texId;
+    }
+
+    void setSize(int wid, int hei) {
+        width = wid;
+        height = hei;
+    }
+
+    int getTextureId() {
+        return textureId;
+    }
+
+    int getImgNumber() {
+        return imgNumber;
+    }
+
+    int getWidth() {
+        return width;
+    }
+
+    int getHeight() {
+        return height;
+    }
+
+    sf::IntRect getImage(int index) {
+        return sf::IntRect(imageCorners[index].x, imageCorners[index].y, width, height);
+    }
+
+    void clearImages() {
+        imageCorners.clear();
+    }
+
+    void setImage(int imgX, int imgY, int imgWid, int imgHei) {
+        clearImages();
+        setSize(imgWid, imgHei);
+        addImage(imgX, imgY);
+    }
+
+    void setImages(int imgX, int imgY, int imgWid, int imgHei, int imgNumX, int imgNumY, bool verticalCounting = false) {
+        clearImages();
+        setSize(imgWid, imgHei);
+        addImages(imgX, imgY, imgNumX, imgNumY, verticalCounting);
+    }
+
+    void addImage(int imgX, int imgY) {
+
+        imageCorners.push_back(sf::Vector2i(imgX, imgY));
+        imgNumber++;
+    }
+
+    void addImages(int imgX, int imgY, int imgNumX, int imgNumY, bool verticalCounting = false) {
+
+        if (!verticalCounting) {
+            for (int i = 0; i < imgNumY; i++) {
+                for (int j = 0; j < imgNumX; j++) {
+                    int xx = imgX + width * j;
+                    int yy = imgY + height * i;
+                    addImage(xx, yy);
+                }
+            }
+        }
+        else {
+            for (int i = 0; i < imgNumX; i++) {
+                for (int j = 0; j < imgNumY; j++) {
+                    int xx = imgX + width * i;
+                    int yy = imgY + height * j;
+                    addImage(xx, yy);
+                }
+            }
+        }
+    }
+};
 
 
 
 class SpriteData{
     public:
     int index;
+    int imgNumber = 0;
     float xOffset;
     float yOffset;
     float xScl;
@@ -343,13 +432,12 @@ class SpriteData{
 
 
 sf::Packet & operator << (sf::Packet& packet, struct SpriteData& spr){
-    return packet << spr.index << spr.xOffset << spr.yOffset << spr.xScl << spr.yScl << spr.xRotCenter << spr.yRotCenter;
+    return packet << spr.index << spr.imgNumber << spr.xOffset << spr.yOffset << spr.xScl << spr.yScl << spr.xRotCenter << spr.yRotCenter;
 }
 
 sf::Packet & operator >> (sf::Packet& packet, struct SpriteData& spr){
-    return packet >> spr.index >> spr.xOffset >> spr.yOffset >> spr.xScl >> spr.yScl >> spr.xRotCenter >> spr.yRotCenter;
+    return packet >> spr.index >> spr.imgNumber >> spr.xOffset >> spr.yOffset >> spr.xScl >> spr.yScl >> spr.xRotCenter >> spr.yRotCenter;
 }
-
 
 
 
@@ -505,6 +593,30 @@ sf::Packet & operator >> (sf::Packet& packet, WarperObject& obj){
 
 
 
+class BrickObject {
+public:
+
+    bool breaked = false;
+
+
+    BrickObject() {
+
+    }
+
+};
+
+
+sf::Packet& operator << (sf::Packet& packet, BrickObject& obj) {
+    return packet << obj.breaked;
+}
+
+sf::Packet& operator >> (sf::Packet& packet, BrickObject& obj) {
+    return packet >> obj.breaked;
+}
+
+
+
+
 
 class ParticlePattern {
 public:
@@ -518,6 +630,11 @@ public:
 
     int sprIndexMin = 0;
     int sprIndexMax = 0;
+
+    int sprImageMin = 0;
+    int sprImageMax = 0;
+
+    bool sprAnimateWithLife = false;
 
     float sprXSclMin = 0;
     float sprXSclMax = 0;
@@ -557,7 +674,8 @@ public:
             setLife(475, 75);
 
             //int spriteIndex = SPRDUST1 + (rand() % 3);
-            setSprIndex(SPRDUST1 +1, 1);
+            setSprIndex(SPRDUST);
+            setSprImageNumber(1, 1);
             setSprXScl(2);
             setSprYScl(2);
         }
@@ -614,7 +732,53 @@ public:
         sprIndexMax = val + amp;
     }
 
+    void setSprImageNumber(int val, int amp = 0) {
+        sprImageMin = val - amp;
+        sprImageMax = val + amp;
+    }
+
 };
+
+
+
+
+
+
+
+
+
+
+/// Resource Handler, stores vectors to resources
+class ResourceHandler {
+public:
+    vector<sf::Texture*> textures;
+    vector<SpriteMap> spriteMaps;
+
+    vector<sf::SoundBuffer*> sounds;
+    vector<sf::Sound> soundPlayers;
+
+    vector<sf::Font*> fonts;
+
+    /*
+    vector<sf::Sprite*> sprites;
+    vector<sf::Sprite*> backgrounds;
+
+    sf::Sound soundPlayer;
+    */
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -630,9 +794,12 @@ class ParticleObject{
     float vspd;
     float hacc;
     float vacc;
+    float ang;
+    float angSpd;
     Physics physics;
 
-    SpriteData sprite;
+    SpriteData spriteData;
+
 
     int depth = 0;
     bool active = true;
@@ -651,7 +818,9 @@ class ParticleObject{
         vspd = 0;
         hacc = 0;
         vacc = 0;
-        sprite.index = 0;
+        ang = 0;
+        angSpd = 0;
+        spriteData.index = 0;
 
     }
 
@@ -662,7 +831,9 @@ class ParticleObject{
         vspd = _vspd;
         hacc = 0;
         vacc = 0;
-        sprite.index = spriteIndex;
+        ang = 0;
+        angSpd = 0;
+        spriteData.index = spriteIndex;
         life = _life;
         id = -1;
 
@@ -688,6 +859,8 @@ class ParticleObject{
         x += hspd;
         y += vspd;
 
+        ang += angSpd;
+
         life--;
 
         if(life < 0){
@@ -708,37 +881,41 @@ class ParticleObject{
         float xx = x+roomInfo.x-view.x;
         float yy = y+roomInfo.y-view.y;
 
-        drawSprite(windowDraw, resources, sprite.index, xx, yy, sprite.xScl, sprite.yScl, 0, 0);
+        drawSprite(windowDraw, resources, spriteData.index, xx, yy, spriteData.xScl, spriteData.yScl, 0, ang);
 
     }
 
 
 
     void drawSprite(sf::RenderWindow& windowDraw, ResourceHandler& resources, int spriteIndex, float x, float y, float xScl, float yScl, int facing, float ang){
+        SpriteMap sprMap = resources.spriteMaps[spriteIndex];
+        int texId = sprMap.getTextureId();
+        sf::Sprite spr(*resources.textures[texId], sprMap.getImage(spriteData.imgNumber));
 
-
-        sf::FloatRect _rect = resources.sprites[spriteIndex]->getLocalBounds();
+        sf::FloatRect _rect = spr.getLocalBounds();
         float sprWidth = _rect.width;
         float sprHeight = _rect.height;
 
-        if(facing == 1){
 
-            resources.sprites[spriteIndex]->setOrigin(sprWidth/2, sprHeight/2);
-            resources.sprites[spriteIndex]->setRotation(ang);
+        if (facing == 1) {
 
-            resources.sprites[spriteIndex]->setPosition(x + ((sprWidth/2) -sprite.xOffset)*xScl, y + ((sprHeight/2)-sprite.yOffset)*yScl);
-            resources.sprites[spriteIndex]->setScale(-xScl, yScl);
+            spr.setOrigin(sprWidth / 2, sprHeight / 2);
+            spr.setRotation(ang);
 
-            windowDraw.draw(*(resources.sprites[spriteIndex]));
-        } else {
+            spr.setPosition(x + ((sprWidth / 2) - spriteData.xOffset) * xScl, y + ((sprHeight / 2) - spriteData.yOffset) * yScl);
+            spr.setScale(-xScl, yScl);
 
-            resources.sprites[spriteIndex]->setOrigin(sprWidth/2, sprHeight/2);
-            resources.sprites[spriteIndex]->setRotation(ang);
+            windowDraw.draw(spr);
+        }
+        else {
+
+            spr.setOrigin(sprWidth / 2, sprHeight / 2);
+            spr.setRotation(ang);
 
 
-            resources.sprites[spriteIndex]->setScale(xScl, yScl);
-            resources.sprites[spriteIndex]->setPosition(x + ((sprWidth/2) - sprite.xOffset )*xScl, y + ((sprHeight/2) - sprite.yOffset )*yScl);
-            windowDraw.draw(*(resources.sprites[spriteIndex]));
+            spr.setScale(xScl, yScl);
+            spr.setPosition(x + ((sprWidth / 2) - spriteData.xOffset) * xScl, y + ((sprHeight / 2) - spriteData.yOffset) * yScl);
+            windowDraw.draw(spr);
         }
 
 
@@ -748,11 +925,11 @@ class ParticleObject{
 };
 
 sf::Packet & operator << (sf::Packet& packet, ParticleObject& obj){
-    return packet << obj.x << obj.y << obj.hspd << obj.vspd << obj.hacc << obj.vacc << obj.depth << obj.id << obj.life << obj.active << obj.physics << obj.sprite << obj.shake << obj.shakeIntensity;
+    return packet << obj.x << obj.y << obj.hspd << obj.vspd << obj.hacc << obj.vacc << obj.ang << obj.angSpd << obj.depth << obj.id << obj.life << obj.active << obj.physics << obj.spriteData << obj.shake << obj.shakeIntensity;
 }
 
 sf::Packet & operator >> (sf::Packet& packet, ParticleObject& obj){
-    return packet >> obj.x >> obj.y >> obj.hspd >> obj.vspd >> obj.hacc >> obj.vacc >> obj.depth >> obj.id >> obj.life >> obj.active >> obj.physics >> obj.sprite >> obj.shake >> obj.shakeIntensity;
+    return packet >> obj.x >> obj.y >> obj.hspd >> obj.vspd >> obj.hacc >> obj.vacc >> obj.ang >> obj.angSpd >> obj.depth >> obj.id >> obj.life >> obj.active >> obj.physics >> obj.spriteData >> obj.shake >> obj.shakeIntensity;
 }
 
 
